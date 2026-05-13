@@ -33,6 +33,66 @@
     --font-body: 'Inter Tight', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
   }
+  [data-theme="dark"] {
+    --bg: #0B1220;
+    --surface: #111827;
+    --surface-2: #1F2937;
+    --ink: #F1F5F9;
+    --ink-2: #94A3B8;
+    --ink-3: #64748B;
+    --line: #1F2937;
+    --line-2: #334155;
+    --accent: #38BDF8;
+    --accent-soft: rgba(56, 189, 248, 0.12);
+    --info: #60A5FA;
+    --info-soft: rgba(96, 165, 250, 0.12);
+    --ok: #34D399;
+    --ok-soft: rgba(52, 211, 153, 0.12);
+    --warn: #FBBF24;
+    --warn-soft: rgba(251, 191, 36, 0.12);
+    --danger: #F87171;
+    --danger-soft: rgba(248, 113, 113, 0.12);
+  }
+  /* Dark mode overrides for elements that are dark by design in light mode */
+  [data-theme="dark"] .switcher { background: #1E293B; }
+  [data-theme="dark"] .primary-btn { background: var(--accent); color: #fff; }
+  [data-theme="dark"] .primary-btn:hover { opacity: 0.9; }
+  [data-theme="dark"] .bubble.me { background: var(--accent); color: #fff; }
+  [data-theme="dark"] .settings-nav-item.active { background: var(--accent); color: #fff; }
+  [data-theme="dark"] .project-hero { background: linear-gradient(135deg, #1E293B 0%, #0F172A 100%); color: #fff; }
+  [data-theme="dark"] .auth-btn { background: var(--accent); color: #fff; }
+  [data-theme="dark"] .timer-card { background: #1E293B; color: #fff; }
+  [data-theme="dark"] .timer-display, [data-theme="dark"] .timer-task { color: #fff; }
+  [data-theme="dark"] body { color: var(--ink); }
+  [data-theme="dark"] .top-actions .icon-btn,
+  [data-theme="dark"] .ghost-btn { color: var(--ink); border-color: var(--line-2); }
+  [data-theme="dark"] .ghost-btn:hover { background: var(--surface-2); }
+  [data-theme="dark"] .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  [data-theme="dark"] .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  [data-theme="dark"] .pill.danger { background: var(--danger-soft); color: var(--danger); }
+  [data-theme="dark"] body { background: var(--bg); }
+  /* Theme toggle button */
+  .theme-toggle {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    width: 40px; height: 40px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-2);
+    z-index: 90;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .theme-toggle:hover { color: var(--ink); }
+  .theme-toggle i { font-size: 18px; }
+  [data-theme="dark"] .theme-toggle .ti-sun { display: none; }
+  [data-theme="light"] .theme-toggle .ti-moon { display: none; }
+  :root .theme-toggle .ti-moon { display: none; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
@@ -88,8 +148,8 @@
   .admin { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
 
   .sidebar {
-    background: var(--ink);
-    color: #E8E3D8;
+    background: #0F172A;
+    color: #CBD5E1;
     padding: 24px 16px;
     display: flex;
     flex-direction: column;
@@ -1068,7 +1128,1007 @@
   }
   .empty i { font-size: 32px; margin-bottom: 12px; display: block; }
 
-  /* Mobile menu button (hidden on desktop) */
+  /* ============ COMMAND PALETTE / SEARCH ============ */
+  .cmdk-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 300;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 80px 20px 20px;
+  }
+  .cmdk-overlay.open { display: flex; }
+  .cmdk-modal {
+    width: 100%;
+    max-width: 560px;
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    overflow: hidden;
+    animation: modalIn 0.15s ease;
+  }
+  .cmdk-search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .cmdk-search i { color: var(--ink-3); font-size: 18px; }
+  .cmdk-search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: var(--font-body);
+    font-size: 15px;
+    color: var(--ink);
+    background: transparent;
+  }
+  .cmdk-search input::placeholder { color: var(--ink-3); }
+  .cmdk-results { max-height: 400px; overflow-y: auto; padding: 8px 0; }
+  .cmdk-section {
+    padding: 6px 20px;
+    font-size: 11px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+  }
+  .cmdk-item {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .cmdk-item:hover, .cmdk-item.selected {
+    background: var(--surface-2);
+  }
+  .cmdk-item i {
+    color: var(--ink-3);
+    font-size: 16px;
+    width: 18px;
+  }
+  .cmdk-item-text { flex: 1; }
+  .cmdk-item-meta { color: var(--ink-3); font-size: 11px; }
+  .cmdk-footer {
+    padding: 10px 20px;
+    border-top: 1px solid var(--line);
+    font-size: 11px;
+    color: var(--ink-3);
+    display: flex;
+    gap: 14px;
+  }
+  .cmdk-footer kbd {
+    font-family: var(--font-mono);
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 10px;
+    color: var(--ink-2);
+  }
+
+
+  /* Project progress tracker */
+  .project-hero {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.4), transparent 70%);
+    pointer-events: none;
+  }
+  .project-name {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1.1;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .project-stage {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .project-progress {
+    position: relative;
+    margin-bottom: 8px;
+  }
+  .project-bar-track {
+    height: 8px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .project-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+  }
+  .project-progress-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 6px;
+    position: relative;
+  }
+
+  .milestone-list {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .milestone {
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    gap: 14px;
+    padding: 16px 20px;
+    align-items: center;
+    border-bottom: 1px solid var(--line);
+  }
+  .milestone:last-child { border-bottom: none; }
+  .milestone-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--surface-2);
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+  .milestone.done .milestone-icon { background: var(--ok-soft); color: var(--ok); }
+  .milestone.current .milestone-icon { background: var(--accent-soft); color: var(--accent); }
+  .milestone-title { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .milestone.done .milestone-title { color: var(--ink-2); text-decoration: line-through; text-decoration-color: var(--ink-3); }
+  .milestone-desc { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+  .milestone-meta { font-size: 11px; color: var(--ink-3); white-space: nowrap; }
+
+  /* Notification bell */
+  .notif-bell {
+    position: relative;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    color: var(--ink-2);
+  }
+  .notif-bell:hover { background: var(--surface-2); }
+  .notif-bell .notif-dot {
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+    border: 2px solid var(--surface);
+  }
+  .notif-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 340px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    z-index: 50;
+    overflow: hidden;
+    display: none;
+  }
+  .notif-panel.open { display: block; }
+  .notif-panel-head {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .notif-panel-title { font-weight: 500; font-size: 14px; }
+  .notif-panel-action { font-size: 12px; color: var(--accent); cursor: pointer; }
+  .notif-list { max-height: 380px; overflow-y: auto; }
+  .notif-li {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .notif-li:hover { background: var(--surface-2); }
+  .notif-li.unread {
+    background: rgba(14, 165, 233, 0.04);
+    border-left: 2px solid var(--accent);
+  }
+  .notif-li:last-child { border-bottom: none; }
+  .notif-li-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+  .notif-li-body { flex: 1; min-width: 0; }
+  .notif-li-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+  .notif-li-text { font-size: 12px; color: var(--ink-2); line-height: 1.4; }
+  .notif-li-time { font-size: 11px; color: var(--ink-3); margin-top: 4px; }
+
+  /* Referrals */
+  .referral-hero {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--info) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .referral-amount {
+    font-family: var(--font-display);
+    font-size: 48px;
+    line-height: 1;
+    margin: 10px 0;
+  }
+  .referral-code {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+    padding: 10px 18px;
+    border-radius: 8px;
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 15px;
+  }
+  .referral-code button {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: var(--font-body);
+  }
+  .referral-code button:hover { background: rgba(255,255,255,0.25); }
+
+  /* FAQ accordion */
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq-question {
+    padding: 16px 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .faq-question i {
+    transition: transform 0.2s;
+    color: var(--ink-3);
+  }
+  .faq-item.open .faq-question i { transform: rotate(180deg); }
+  .faq-answer {
+    padding: 0 20px 16px;
+    font-size: 13px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    display: none;
+  }
+  .faq-item.open .faq-answer { display: block; }
+
+  /* Report card */
+  .report-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .report-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .report-month {
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--ink);
+  }
+  .report-meta { font-size: 12px; color: var(--ink-2); margin-top: 2px; }
+  .report-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .report-stat {
+    padding: 14px;
+    background: var(--surface-2);
+    border-radius: 8px;
+  }
+  .report-stat-label {
+    font-size: 11px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+  .report-stat-value {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .report-stat-change {
+    font-size: 11px;
+    color: var(--ok);
+    margin-top: 4px;
+  }
+  .report-stat-change.down { color: var(--danger); }
+
+  @media (max-width: 600px) {
+    .report-stats { grid-template-columns: repeat(2, 1fr); }
+    .notif-panel { width: calc(100vw - 32px); right: -8px; }
+    .referral-amount { font-size: 36px; }
+  }
+
+
+  .auth-view {
+    display: none;
+    min-height: 100vh;
+    background: var(--bg);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .auth-view.active { display: flex; }
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 36px 32px;
+  }
+  .auth-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .auth-brand .brand-mark { width: 36px; height: 36px; }
+  .auth-brand-name {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .auth-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    text-align: center;
+  }
+  .auth-sub {
+    font-size: 13px;
+    color: var(--ink-2);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .auth-form .form-group { margin-bottom: 14px; }
+  .auth-form input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+  }
+  .auth-form input:focus {
+    border-color: var(--accent);
+    outline: 2px solid var(--accent-soft);
+  }
+  .auth-btn {
+    width: 100%;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .auth-btn:hover { opacity: 0.9; }
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--ink-3);
+    font-size: 12px;
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .auth-oauth {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .auth-oauth button {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 11px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: var(--ink);
+  }
+  .auth-oauth button:hover { background: var(--surface-2); }
+  .auth-footer {
+    text-align: center;
+    font-size: 13px;
+    color: var(--ink-2);
+    margin-top: 22px;
+  }
+  .auth-footer a {
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .auth-forgot {
+    text-align: right;
+    font-size: 12px;
+    margin-top: -8px;
+    margin-bottom: 12px;
+  }
+  .auth-forgot a {
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .auth-role-pick {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--surface-2);
+    padding: 4px;
+    border-radius: 8px;
+  }
+  .auth-role-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+  .auth-role-btn.active {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+
+  .kanban {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(220px, 1fr));
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .kanban-col {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 12px;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .kanban-col-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 4px 4px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 4px;
+  }
+  .kanban-col-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .kanban-col-dot {
+    width: 8px; height: 8px;
+    border-radius: 999px;
+    background: var(--ink-3);
+  }
+  .kanban-col[data-stage="new"] .kanban-col-dot { background: var(--info); }
+  .kanban-col[data-stage="discovery"] .kanban-col-dot { background: var(--accent); }
+  .kanban-col[data-stage="proposal"] .kanban-col-dot { background: var(--warn); }
+  .kanban-col[data-stage="signed"] .kanban-col-dot { background: var(--ok); }
+  .kanban-col[data-stage="onboarding"] .kanban-col-dot { background: #7C3AED; }
+  .kanban-count {
+    font-size: 11px;
+    color: var(--ink-3);
+    background: var(--surface);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .lead-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: grab;
+    transition: all 0.15s;
+  }
+  .lead-card:hover { border-color: var(--line-2); transform: translateY(-1px); }
+  .lead-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .lead-business {
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-bottom: 8px;
+  }
+  .lead-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  .lead-value {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ok);
+    font-family: var(--font-mono);
+  }
+  .lead-age {
+    font-size: 11px;
+    color: var(--ink-3);
+  }
+  .lead-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--surface-2);
+    color: var(--ink-2);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  /* ============ TIME TRACKING ============ */
+  .timer-card {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .timer-display {
+    font-family: var(--font-mono);
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .timer-info {
+    flex: 1;
+    min-width: 200px;
+  }
+  .timer-task {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  .timer-client {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+  }
+  .timer-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .timer-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .timer-btn.stop { background: var(--danger); }
+  .timer-btn.ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  @media (max-width: 900px) {
+    .kanban { grid-template-columns: repeat(5, 280px); }
+  }
+  @media (max-width: 600px) {
+    .timer-display { font-size: 28px; }
+    .timer-card { padding: 16px; }
+  }
+
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-bottom: 12px;
+  }
+  .breadcrumb a {
+    color: var(--ink-2);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .breadcrumb a:hover { color: var(--accent); }
+  .breadcrumb i { font-size: 14px; }
+
+  .detail-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .detail-title-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .detail-avatar {
+    width: 56px; height: 56px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 24px;
+    color: var(--ink-2);
+    flex-shrink: 0;
+  }
+  .detail-title {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  .detail-sub {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin-top: 4px;
+  }
+  .detail-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  /* Sub-tabs for detail pages */
+  .sub-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+  .sub-tab {
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--ink-2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sub-tab i { font-size: 14px; }
+  .sub-tab:hover { color: var(--ink); }
+  .sub-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+  .sub-tab-content { display: none; }
+  .sub-tab-content.active { display: block; }
+
+  /* Info grid for site/client details */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .info-cell {
+    background: var(--surface);
+    padding: 16px 18px;
+  }
+  .info-label {
+    font-size: 11px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+  }
+  .info-value {
+    font-size: 15px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .info-value.mono { font-family: var(--font-mono); font-size: 13px; font-weight: 400; }
+
+  /* Uptime bar */
+  .uptime-bars {
+    display: flex;
+    gap: 2px;
+    height: 28px;
+    align-items: stretch;
+  }
+  .uptime-day {
+    flex: 1;
+    border-radius: 2px;
+    background: var(--ok);
+    min-width: 4px;
+    transition: opacity 0.15s;
+    cursor: help;
+  }
+  .uptime-day.warn { background: var(--warn); }
+  .uptime-day.down { background: var(--danger); }
+  .uptime-day:hover { opacity: 0.7; }
+
+  @media (max-width: 600px) {
+    .detail-title { font-size: 24px; }
+    .detail-avatar { width: 44px; height: 44px; font-size: 18px; }
+  }
+
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 14px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    z-index: 1;
+  }
+  .modal-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .modal-close {
+    width: 30px; height: 30px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--ink-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-close:hover { background: var(--surface-2); }
+  .modal-body { padding: 20px 24px; }
+  .modal-foot {
+    padding: 14px 24px 18px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+  }
+
+  /* Step indicator for wizards */
+  .wizard-steps {
+    display: flex;
+    gap: 4px;
+    padding: 14px 24px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .wizard-step {
+    flex: 1;
+    padding: 8px 0 14px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+  }
+  .wizard-step.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+  .wizard-step.done {
+    color: var(--ok);
+    border-bottom-color: var(--ok);
+  }
+  .wizard-page { display: none; }
+  .wizard-page.active { display: block; }
+
+  /* Form rows */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  .form-group label .req { color: var(--danger); }
+  .form-group label .hint {
+    color: var(--ink-3);
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    outline: none;
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--accent); }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+
+  /* Plan picker */
+  .plan-picker {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .plan-card {
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .plan-card:hover { border-color: var(--line-2); }
+  .plan-card.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .plan-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+  .plan-price {
+    font-family: var(--font-display);
+    font-size: 22px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .plan-features {
+    font-size: 11px;
+    color: var(--ink-2);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .plan-picker { grid-template-columns: 1fr; }
+    .modal { max-height: 100vh; border-radius: 0; }
+    .modal-overlay { padding: 0; }
+  }
+
+
   .mobile-menu-btn {
     display: none;
     position: fixed;
@@ -1342,13 +2402,159 @@
   <div class="switcher">
     <button class="active" data-view="admin"><i class="ti ti-shield-lock"></i> Admin</button>
     <button data-view="customer"><i class="ti ti-user"></i> Customer</button>
+    <button data-view="auth"><i class="ti ti-login"></i> Auth</button>
   </div>
+
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <i class="ti ti-moon"></i>
+    <i class="ti ti-sun"></i>
+  </button>
 
   <!-- Mobile menu button (only shows in admin view on mobile) -->
   <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
     <i class="ti ti-menu-2"></i>
   </button>
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ============ AUTH VIEW ============ -->
+  <div class="view" id="view-auth">
+    <!-- LOGIN -->
+    <div class="auth-view active" id="auth-login">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <div class="brand-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="OnVex logo">
+              <path d="M5 6 L11 12 L5 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M13 6 L19 12 L13 18" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="auth-brand-name">OnVex</div>
+        </div>
+        <div class="auth-title">Welcome back</div>
+        <div class="auth-sub">Sign in to your OnVex account</div>
+
+        <div class="auth-role-pick">
+          <button class="auth-role-btn active" data-role="admin">Team login</button>
+          <button class="auth-role-btn" data-role="client">Client portal</button>
+        </div>
+
+        <form class="auth-form" onsubmit="event.preventDefault(); switchAuth('logged-in'); switchView('admin');">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="you@onvex.dev" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" placeholder="••••••••" required />
+          </div>
+          <div class="auth-forgot"><a onclick="switchAuth('forgot')">Forgot password?</a></div>
+          <button type="submit" class="auth-btn">Sign in</button>
+        </form>
+
+        <div class="auth-divider">or</div>
+        <div class="auth-oauth">
+          <button><i class="ti ti-brand-google"></i> Continue with Google</button>
+          <button><i class="ti ti-brand-github"></i> Continue with GitHub</button>
+        </div>
+
+        <div class="auth-footer">
+          Don't have an account? <a onclick="switchAuth('signup')">Sign up</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNUP -->
+    <div class="auth-view" id="auth-signup">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <div class="brand-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="OnVex logo">
+              <path d="M5 6 L11 12 L5 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M13 6 L19 12 L13 18" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="auth-brand-name">OnVex</div>
+        </div>
+        <div class="auth-title">Create your account</div>
+        <div class="auth-sub">Get started in under 2 minutes</div>
+
+        <form class="auth-form" onsubmit="event.preventDefault(); switchView('admin');">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First name</label>
+              <input type="text" required />
+            </div>
+            <div class="form-group">
+              <label>Last name</label>
+              <input type="text" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Work email</label>
+            <input type="email" placeholder="you@example.com" required />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" placeholder="At least 8 characters" required />
+          </div>
+          <button type="submit" class="auth-btn">Create account</button>
+        </form>
+
+        <div class="auth-footer" style="font-size: 11px; color: var(--ink-3); margin-top: 14px;">
+          By signing up, you agree to our Terms and Privacy Policy.
+        </div>
+
+        <div class="auth-footer">
+          Already have an account? <a onclick="switchAuth('login')">Sign in</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORGOT PASSWORD -->
+    <div class="auth-view" id="auth-forgot">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <div class="brand-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="OnVex logo">
+              <path d="M5 6 L11 12 L5 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M13 6 L19 12 L13 18" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
+          <div class="auth-brand-name">OnVex</div>
+        </div>
+        <div class="auth-title">Reset your password</div>
+        <div class="auth-sub">Enter your email and we'll send you a reset link</div>
+
+        <form class="auth-form" onsubmit="event.preventDefault(); switchAuth('reset-sent');">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="you@example.com" required />
+          </div>
+          <button type="submit" class="auth-btn">Send reset link</button>
+        </form>
+
+        <div class="auth-footer">
+          Remember it? <a onclick="switchAuth('login')">Back to sign in</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESET LINK SENT (confirmation state) -->
+    <div class="auth-view" id="auth-reset-sent">
+      <div class="auth-card" style="text-align: center;">
+        <div style="width: 56px; height: 56px; background: var(--ok-soft); color: var(--ok); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;">
+          <i class="ti ti-mail-check" style="font-size: 26px;"></i>
+        </div>
+        <div class="auth-title">Check your inbox</div>
+        <div class="auth-sub" style="margin-bottom: 22px;">If an account exists with that email, we just sent a reset link.</div>
+        <button class="auth-btn" onclick="switchAuth('login')">Back to sign in</button>
+        <div class="auth-footer" style="margin-top: 16px;">
+          Didn't get it? <a onclick="switchAuth('forgot')">Try again</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- ============ ADMIN VIEW ============ -->
   <div class="view active" id="view-admin">
@@ -1373,6 +2579,7 @@
           <div class="nav-item active" data-page="overview"><i class="ti ti-layout-dashboard"></i> Overview</div>
           <div class="nav-item" data-page="sites"><i class="ti ti-world"></i> Sites <span class="badge">14</span></div>
           <div class="nav-item" data-page="clients"><i class="ti ti-users"></i> Clients</div>
+          <div class="nav-item" data-page="leads"><i class="ti ti-target"></i> Leads <span class="badge" style="background: var(--warn);">5</span></div>
           <div class="nav-item" data-page="messages"><i class="ti ti-message-circle"></i> Messages <span class="badge">7</span></div>
         </div>
 
@@ -1381,11 +2588,14 @@
           <div class="nav-item" data-page="billing"><i class="ti ti-receipt"></i> Billing</div>
           <div class="nav-item" data-page="reports"><i class="ti ti-chart-line"></i> Reports</div>
           <div class="nav-item" data-page="campaigns"><i class="ti ti-megaphone"></i> Campaigns</div>
+          <div class="nav-item" data-page="time"><i class="ti ti-clock"></i> Time</div>
           <div class="nav-item" data-page="tasks"><i class="ti ti-checkbox"></i> Tasks</div>
         </div>
 
         <div class="nav-section">
           <div class="nav-label">System</div>
+          <div class="nav-item" data-page="team"><i class="ti ti-users-group"></i> Team</div>
+          <div class="nav-item" data-page="docs"><i class="ti ti-book"></i> Docs / SOPs</div>
           <div class="nav-item" data-page="notifications"><i class="ti ti-bell"></i> Notifications</div>
           <div class="nav-item" data-page="settings"><i class="ti ti-settings"></i> Settings</div>
         </div>
@@ -1415,7 +2625,7 @@
                 <span class="kbd">⌘K</span>
               </div>
               <div class="icon-btn"><i class="ti ti-bell"></i><span class="dot"></span></div>
-              <button class="primary-btn"><i class="ti ti-plus"></i> New site</button>
+              <button class="primary-btn" onclick="openModal('newSiteModal')"><i class="ti ti-plus"></i> New site</button>
             </div>
           </div>
 
@@ -1641,7 +2851,7 @@
               <h1>All <em>sites</em></h1>
               <p>14 sites under management · 1 needs attention</p>
             </div>
-            <button class="primary-btn"><i class="ti ti-plus"></i> Add site</button>
+            <button class="primary-btn" onclick="openModal('newSiteModal')"><i class="ti ti-plus"></i> Add site</button>
           </div>
 
           <div class="metrics">
@@ -1692,7 +2902,7 @@
               <h1>Your <em>clients</em></h1>
               <p>11 active clients · 1 lead in pipeline</p>
             </div>
-            <button class="primary-btn"><i class="ti ti-plus"></i> Add client</button>
+            <button class="primary-btn" onclick="openModal('newClientModal')"><i class="ti ti-plus"></i> Add client</button>
           </div>
 
           <div class="client-grid">
@@ -1806,6 +3016,313 @@
                 <div><div class="client-stat-label">Sites</div><div class="client-stat-value">1</div></div>
                 <div><div class="client-stat-label">MRR</div><div class="client-stat-value">$180</div></div>
                 <div><div class="client-stat-label">Since</div><div class="client-stat-value">'24</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEADS / CRM PIPELINE PAGE -->
+        <div class="page" id="page-leads">
+          <div class="page-header">
+            <div>
+              <h1>Leads</h1>
+              <p class="page-sub">Pipeline of prospects · drag to move between stages</p>
+            </div>
+            <button class="primary-btn" onclick="openModal('newLeadModal')"><i class="ti ti-plus"></i> New lead</button>
+          </div>
+
+          <div class="metrics" style="margin-bottom: 24px;">
+            <div class="metric">
+              <div class="metric-label">In pipeline</div>
+              <div class="metric-value">12</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Pipeline value</div>
+              <div class="metric-value">$48k</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">This month</div>
+              <div class="metric-value">3 won</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Conversion</div>
+              <div class="metric-value">38%</div>
+            </div>
+          </div>
+
+          <div class="kanban">
+            <div class="kanban-col" data-stage="new">
+              <div class="kanban-col-head">
+                <div class="kanban-col-title"><span class="kanban-col-dot"></span> New leads</div>
+                <span class="kanban-count">3</span>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Maya Chen</div>
+                <div class="lead-business">Chen Photography Studio</div>
+                <span class="lead-tag">Referral</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$3-5k</span>
+                  <span class="lead-age">2d ago</span>
+                </div>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Carlos Mendez</div>
+                <div class="lead-business">Mendez Construction</div>
+                <span class="lead-tag">Website inquiry</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$8-12k</span>
+                  <span class="lead-age">3d ago</span>
+                </div>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Sarah Klein</div>
+                <div class="lead-business">Klein Pediatric Dentistry</div>
+                <span class="lead-tag">Networking</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$5-8k</span>
+                  <span class="lead-age">5d ago</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="kanban-col" data-stage="discovery">
+              <div class="kanban-col-head">
+                <div class="kanban-col-title"><span class="kanban-col-dot"></span> Discovery</div>
+                <span class="kanban-count">2</span>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Ben Ortiz</div>
+                <div class="lead-business">Ortiz Family Law</div>
+                <span class="lead-tag">Referral</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$10-15k</span>
+                  <span class="lead-age">1w ago</span>
+                </div>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Priya Patel</div>
+                <div class="lead-business">Saffron Indian Kitchen</div>
+                <span class="lead-tag">Cold outreach</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$4-6k</span>
+                  <span class="lead-age">1w ago</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="kanban-col" data-stage="proposal">
+              <div class="kanban-col-head">
+                <div class="kanban-col-title"><span class="kanban-col-dot"></span> Proposal sent</div>
+                <span class="kanban-count">3</span>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Roger Whitaker</div>
+                <div class="lead-business">Whitaker Pool Service</div>
+                <span class="lead-tag">Referral</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$7,200</span>
+                  <span class="lead-age">3d ago</span>
+                </div>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Diana Reyes</div>
+                <div class="lead-business">Reyes Real Estate Group</div>
+                <span class="lead-tag">Social media</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$12,500</span>
+                  <span class="lead-age">5d ago</span>
+                </div>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Tom Frances</div>
+                <div class="lead-business">Frances Auto Repair</div>
+                <span class="lead-tag">Website inquiry</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$5,800</span>
+                  <span class="lead-age">2d ago</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="kanban-col" data-stage="signed">
+              <div class="kanban-col-head">
+                <div class="kanban-col-title"><span class="kanban-col-dot"></span> Signed</div>
+                <span class="kanban-count">2</span>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Anita Brooks</div>
+                <div class="lead-business">Brooks Therapy</div>
+                <span class="lead-tag">Referral</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$6,400</span>
+                  <span class="lead-age">Today</span>
+                </div>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Greg Hammond</div>
+                <div class="lead-business">Hammond Roofing</div>
+                <span class="lead-tag">Website inquiry</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$9,200</span>
+                  <span class="lead-age">2d ago</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="kanban-col" data-stage="onboarding">
+              <div class="kanban-col-head">
+                <div class="kanban-col-title"><span class="kanban-col-dot"></span> Onboarding</div>
+                <span class="kanban-count">2</span>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Janet Hsu</div>
+                <div class="lead-business">Hsu &amp; Associates CPA</div>
+                <span class="lead-tag">Referral</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$11,000</span>
+                  <span class="lead-age">1w ago</span>
+                </div>
+              </div>
+              <div class="lead-card">
+                <div class="lead-name">Marcus Lee</div>
+                <div class="lead-business">Lee Martial Arts Studio</div>
+                <span class="lead-tag">Networking</span>
+                <div class="lead-meta">
+                  <span class="lead-value">$4,800</span>
+                  <span class="lead-age">1w ago</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIME TRACKING PAGE -->
+        <div class="page" id="page-time">
+          <div class="page-header">
+            <div>
+              <h1>Time</h1>
+              <p class="page-sub">Track hours per client · know if your retainers are profitable</p>
+            </div>
+            <button class="primary-btn" id="newTimeEntryBtn"><i class="ti ti-plus"></i> Log time</button>
+          </div>
+
+          <div class="timer-card">
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
+            <div class="timer-info">
+              <div class="timer-task" id="timerTask">No active timer</div>
+              <div class="timer-client" id="timerClient">Click start to begin tracking</div>
+            </div>
+            <div class="timer-actions">
+              <button class="timer-btn ghost" id="timerProjectBtn"><i class="ti ti-folder"></i> Change project</button>
+              <button class="timer-btn" id="timerToggleBtn"><i class="ti ti-player-play"></i> Start</button>
+            </div>
+          </div>
+
+          <div class="metrics" style="margin-bottom: 24px;">
+            <div class="metric">
+              <div class="metric-label">Today</div>
+              <div class="metric-value">4.2h</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">This week</div>
+              <div class="metric-value">22.5h</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Billable</div>
+              <div class="metric-value">86%</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Avg / client</div>
+              <div class="metric-value">3.1h</div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Recent entries</div>
+                <div class="panel-action">View all <i class="ti ti-chevron-right"></i></div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot task"><i class="ti ti-clock"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Wedding gallery section · Acme Florals</div>
+                  <div class="activity-time">Today 9:14am - 11:32am · 2h 18m</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot msg"><i class="ti ti-clock"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Monthly maintenance · Red Rock Dental</div>
+                  <div class="activity-time">Today 7:22am - 8:14am · 52m</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot task"><i class="ti ti-clock"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Ad copy revisions · Sonoran Legal</div>
+                  <div class="activity-time">Yesterday 2:08pm - 3:42pm · 1h 34m</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot pay"><i class="ti ti-clock"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Discovery call · Ortiz Family Law</div>
+                  <div class="activity-time">Yesterday 11:00am - 11:45am · 45m</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Hours by client · this month</div>
+              </div>
+              <div style="padding: 0;">
+                <div style="padding: 14px 20px; border-bottom: 1px solid var(--line);">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+                    <span>Acme Florals</span>
+                    <span class="mono">12.4h / 8h <span style="color: var(--danger); font-size: 11px; margin-left: 6px;">+55%</span></span>
+                  </div>
+                  <div style="height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden;">
+                    <div style="height: 100%; background: var(--danger); width: 100%;"></div>
+                  </div>
+                </div>
+                <div style="padding: 14px 20px; border-bottom: 1px solid var(--line);">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+                    <span>Red Rock Dental</span>
+                    <span class="mono">5.8h / 6h</span>
+                  </div>
+                  <div style="height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden;">
+                    <div style="height: 100%; background: var(--ok); width: 96%;"></div>
+                  </div>
+                </div>
+                <div style="padding: 14px 20px; border-bottom: 1px solid var(--line);">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+                    <span>Sonoran Legal</span>
+                    <span class="mono">7.2h / 10h</span>
+                  </div>
+                  <div style="height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden;">
+                    <div style="height: 100%; background: var(--accent); width: 72%;"></div>
+                  </div>
+                </div>
+                <div style="padding: 14px 20px; border-bottom: 1px solid var(--line);">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+                    <span>Mojave Market</span>
+                    <span class="mono">3.5h / 4h</span>
+                  </div>
+                  <div style="height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden;">
+                    <div style="height: 100%; background: var(--accent); width: 88%;"></div>
+                  </div>
+                </div>
+                <div style="padding: 14px 20px;">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px;">
+                    <span>Cactus Cantina</span>
+                    <span class="mono">2.1h / 5h</span>
+                  </div>
+                  <div style="height: 6px; background: var(--surface-2); border-radius: 999px; overflow: hidden;">
+                    <div style="height: 100%; background: var(--accent); width: 42%;"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -2309,6 +3826,221 @@
           </div>
         </div>
 
+        <!-- TEAM PAGE -->
+        <div class="page" id="page-team">
+          <div class="page-header">
+            <div>
+              <h1>Team</h1>
+              <p class="page-sub">Manage who has access to OnVex and what they can do</p>
+            </div>
+            <button class="primary-btn"><i class="ti ti-user-plus"></i> Invite member</button>
+          </div>
+
+          <div class="metrics" style="margin-bottom: 24px;">
+            <div class="metric">
+              <div class="metric-label">Active members</div>
+              <div class="metric-value">2</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Pending invites</div>
+              <div class="metric-value">1</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Contractors</div>
+              <div class="metric-value">0</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Seats remaining</div>
+              <div class="metric-value">3</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Team members</div>
+              <div class="panel-action">Manage roles <i class="ti ti-chevron-right"></i></div>
+            </div>
+            <div style="display: grid; grid-template-columns: 44px 1fr auto auto auto; gap: 14px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line);">
+              <div class="avatar" style="background: var(--accent); width: 36px; height: 36px;">YO</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500;">You (Owner)</div>
+                <div style="font-size: 12px; color: var(--ink-2);">you@onvex.dev · Joined March 2024</div>
+              </div>
+              <span class="pill ok">Active</span>
+              <span style="font-size: 12px; color: var(--ink-2); font-weight: 500;">Owner · 50%</span>
+              <i class="ti ti-dots" style="color: var(--ink-3); cursor: pointer;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 44px 1fr auto auto auto; gap: 14px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line);">
+              <div class="avatar" style="background: var(--info); width: 36px; height: 36px;">PA</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500;">Your Partner</div>
+                <div style="font-size: 12px; color: var(--ink-2);">partner@onvex.dev · Joined March 2024</div>
+              </div>
+              <span class="pill ok">Active</span>
+              <span style="font-size: 12px; color: var(--ink-2); font-weight: 500;">Owner · 50%</span>
+              <i class="ti ti-dots" style="color: var(--ink-3); cursor: pointer;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 44px 1fr auto auto auto; gap: 14px; align-items: center; padding: 14px 20px;">
+              <div class="avatar" style="background: var(--surface-2); color: var(--ink-3); width: 36px; height: 36px;"><i class="ti ti-mail"></i></div>
+              <div>
+                <div style="font-size: 14px; font-weight: 500;">marcus@designstudio.com</div>
+                <div style="font-size: 12px; color: var(--ink-2);">Invited 2 days ago · Designer role</div>
+              </div>
+              <span class="pill warn">Pending</span>
+              <span style="font-size: 12px; color: var(--ink-2);">Designer</span>
+              <i class="ti ti-dots" style="color: var(--ink-3); cursor: pointer;"></i>
+            </div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <div style="font-family: var(--font-display); font-size: 22px; margin-bottom: 4px;">Roles</div>
+            <div style="font-size: 13px; color: var(--ink-2); margin-bottom: 16px;">What each role can see and do</div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div style="padding: 18px 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <div style="font-size: 15px; font-weight: 500;">Owner</div>
+                  <span style="font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em;">2 members</span>
+                </div>
+                <div style="font-size: 12px; color: var(--ink-2); margin-bottom: 12px;">Full access · billing · team management · all data</div>
+                <div style="font-size: 12px; color: var(--ink-2); line-height: 1.8;">
+                  <i class="ti ti-check" style="color: var(--ok); margin-right: 4px;"></i> All site &amp; client data<br>
+                  <i class="ti ti-check" style="color: var(--ok); margin-right: 4px;"></i> Billing &amp; invoicing<br>
+                  <i class="ti ti-check" style="color: var(--ok); margin-right: 4px;"></i> Team management<br>
+                  <i class="ti ti-check" style="color: var(--ok); margin-right: 4px;"></i> Delete or transfer business
+                </div>
+              </div>
+            </div>
+            <div class="panel">
+              <div style="padding: 18px 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <div style="font-size: 15px; font-weight: 500;">Designer / Developer</div>
+                  <span style="font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em;">1 pending</span>
+                </div>
+                <div style="font-size: 12px; color: var(--ink-2); margin-bottom: 12px;">Work on assigned sites · log time · message clients</div>
+                <div style="font-size: 12px; color: var(--ink-2); line-height: 1.8;">
+                  <i class="ti ti-check" style="color: var(--ok); margin-right: 4px;"></i> Assigned sites only<br>
+                  <i class="ti ti-check" style="color: var(--ok); margin-right: 4px;"></i> Log time &amp; complete tasks<br>
+                  <i class="ti ti-x" style="color: var(--ink-3); margin-right: 4px;"></i> No billing access<br>
+                  <i class="ti ti-x" style="color: var(--ink-3); margin-right: 4px;"></i> No team management
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DOCS / SOPs PAGE -->
+        <div class="page" id="page-docs">
+          <div class="page-header">
+            <div>
+              <h1>Docs &amp; SOPs</h1>
+              <p class="page-sub">Internal knowledge base · how we run OnVex</p>
+            </div>
+            <button class="primary-btn"><i class="ti ti-plus"></i> New doc</button>
+          </div>
+
+          <div class="grid-2" style="margin-bottom: 24px;">
+            <div class="panel" style="padding: 18px 20px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <div style="width: 32px; height: 32px; background: var(--accent-soft); color: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="ti ti-rocket"></i></div>
+                <div style="font-family: var(--font-display); font-size: 18px;">Quick start</div>
+              </div>
+              <div style="font-size: 13px; color: var(--ink-2); margin-bottom: 12px;">If you're new here, start with these.</div>
+              <div style="font-size: 13px;">
+                <div style="padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; display: flex; justify-content: space-between;"><span>Onboarding a new client</span><i class="ti ti-chevron-right" style="color: var(--ink-3);"></i></div>
+                <div style="padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; display: flex; justify-content: space-between;"><span>Our messaging style guide</span><i class="ti ti-chevron-right" style="color: var(--ink-3);"></i></div>
+                <div style="padding: 8px 0; cursor: pointer; display: flex; justify-content: space-between;"><span>How to handle change requests</span><i class="ti ti-chevron-right" style="color: var(--ink-3);"></i></div>
+              </div>
+            </div>
+            <div class="panel" style="padding: 18px 20px;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                <div style="width: 32px; height: 32px; background: var(--ok-soft); color: var(--ok); border-radius: 8px; display: flex; align-items: center; justify-content: center;"><i class="ti ti-star"></i></div>
+                <div style="font-family: var(--font-display); font-size: 18px;">Most viewed</div>
+              </div>
+              <div style="font-size: 13px; color: var(--ink-2); margin-bottom: 12px;">Docs the team references most.</div>
+              <div style="font-size: 13px;">
+                <div style="padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; display: flex; justify-content: space-between;"><span>WordPress site deploy checklist</span><span style="font-size: 11px; color: var(--ink-3);">142 views</span></div>
+                <div style="padding: 8px 0; border-bottom: 1px solid var(--line); cursor: pointer; display: flex; justify-content: space-between;"><span>Backup &amp; recovery process</span><span style="font-size: 11px; color: var(--ink-3);">98 views</span></div>
+                <div style="padding: 8px 0; cursor: pointer; display: flex; justify-content: space-between;"><span>Pricing &amp; proposal templates</span><span style="font-size: 11px; color: var(--ink-3);">76 views</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">All docs</div>
+              <div class="search" style="cursor: pointer; padding: 6px 12px; max-width: 280px;">
+                <i class="ti ti-search"></i><span>Search docs…</span>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--line); cursor: pointer;">
+              <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+              <div>
+                <div style="font-size: 13px; font-weight: 500;">Onboarding a new client</div>
+                <div style="font-size: 11px; color: var(--ink-3);">Operations · Updated 5 days ago</div>
+              </div>
+              <span class="lead-tag">Operations</span>
+              <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--line); cursor: pointer;">
+              <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+              <div>
+                <div style="font-size: 13px; font-weight: 500;">WordPress site deploy checklist</div>
+                <div style="font-size: 11px; color: var(--ink-3);">Tech · Updated 2 weeks ago</div>
+              </div>
+              <span class="lead-tag">Tech</span>
+              <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--line); cursor: pointer;">
+              <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+              <div>
+                <div style="font-size: 13px; font-weight: 500;">How we price projects</div>
+                <div style="font-size: 11px; color: var(--ink-3);">Sales · Updated 3 weeks ago</div>
+              </div>
+              <span class="lead-tag">Sales</span>
+              <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--line); cursor: pointer;">
+              <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+              <div>
+                <div style="font-size: 13px; font-weight: 500;">Pricing &amp; proposal templates</div>
+                <div style="font-size: 11px; color: var(--ink-3);">Sales · Updated last month</div>
+              </div>
+              <span class="lead-tag">Sales</span>
+              <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--line); cursor: pointer;">
+              <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+              <div>
+                <div style="font-size: 13px; font-weight: 500;">Backup &amp; recovery process</div>
+                <div style="font-size: 11px; color: var(--ink-3);">Tech · Updated last month</div>
+              </div>
+              <span class="lead-tag">Tech</span>
+              <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--line); cursor: pointer;">
+              <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+              <div>
+                <div style="font-size: 13px; font-weight: 500;">Our messaging style guide</div>
+                <div style="font-size: 11px; color: var(--ink-3);">Brand · Updated 2 months ago</div>
+              </div>
+              <span class="lead-tag">Brand</span>
+              <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+            </div>
+            <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 12px 20px; cursor: pointer;">
+              <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+              <div>
+                <div style="font-size: 13px; font-weight: 500;">How to handle change requests</div>
+                <div style="font-size: 11px; color: var(--ink-3);">Operations · Updated 2 months ago</div>
+              </div>
+              <span class="lead-tag">Operations</span>
+              <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+            </div>
+          </div>
+        </div>
+
         <!-- NOTIFICATIONS PAGE -->
         <div class="page" id="page-notifications">
           <div class="page-header">
@@ -2514,6 +4246,486 @@
           </div>
         </div>
 
+        <!-- SITE DETAIL PAGE -->
+        <div class="page" id="page-site-detail">
+          <div class="breadcrumb">
+            <a onclick="goToPage('sites')">Sites</a>
+            <i class="ti ti-chevron-right"></i>
+            <span id="siteDetailCrumb">desertbloomflorals.com</span>
+          </div>
+
+          <div class="detail-header">
+            <div class="detail-title-group">
+              <div class="detail-avatar" id="siteDetailAvatar">D</div>
+              <div>
+                <div class="detail-title" id="siteDetailTitle">desertbloomflorals.com</div>
+                <div class="detail-sub">
+                  <span class="pill ok">Healthy</span>
+                  <span style="margin-left: 8px;">Acme Florals · Pro plan · Since March 2024</span>
+                </div>
+              </div>
+            </div>
+            <div class="detail-actions">
+              <button class="ghost-btn"><i class="ti ti-external-link"></i> Visit site</button>
+              <button class="ghost-btn"><i class="ti ti-message-circle"></i> Message client</button>
+              <button class="primary-btn"><i class="ti ti-edit"></i> Edit</button>
+            </div>
+          </div>
+
+          <div class="sub-tabs" data-tab-group="siteDetail">
+            <div class="sub-tab active" data-tab="siteOverview"><i class="ti ti-layout-dashboard"></i> Overview</div>
+            <div class="sub-tab" data-tab="siteActivity"><i class="ti ti-history"></i> Activity</div>
+            <div class="sub-tab" data-tab="siteAccess"><i class="ti ti-key"></i> Access &amp; Credentials</div>
+            <div class="sub-tab" data-tab="siteFiles"><i class="ti ti-folder"></i> Files</div>
+            <div class="sub-tab" data-tab="siteBilling"><i class="ti ti-receipt"></i> Billing</div>
+          </div>
+
+          <div class="sub-tab-content active" data-content="siteOverview">
+            <div class="info-grid">
+              <div class="info-cell">
+                <div class="info-label">Uptime · 30d</div>
+                <div class="info-value">100%</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">Visitors · 30d</div>
+                <div class="info-value">2,847</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">Avg load time</div>
+                <div class="info-value">1.4s</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">SSL expires</div>
+                <div class="info-value">Aug 14</div>
+              </div>
+            </div>
+
+            <div class="chart-card" style="margin-bottom: 20px;">
+              <div class="chart-title">Uptime · last 30 days</div>
+              <div class="chart-sub">Each bar is one day. Hover for details.</div>
+              <div class="uptime-bars" id="uptimeBars"></div>
+            </div>
+
+            <div class="grid-2">
+              <div class="panel">
+                <div class="panel-head">
+                  <div class="panel-title">Tech stack</div>
+                </div>
+                <div style="padding: 16px 20px;">
+                  <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; font-size: 13px;">
+                    <span style="color: var(--ink-2);">Platform</span><span>WordPress 6.5.2</span>
+                    <span style="color: var(--ink-2);">Theme</span><span>Custom (OnVex build)</span>
+                    <span style="color: var(--ink-2);">Hosting</span><span>WP Engine</span>
+                    <span style="color: var(--ink-2);">CDN</span><span>Cloudflare</span>
+                    <span style="color: var(--ink-2);">SSL</span><span>Let's Encrypt (auto)</span>
+                    <span style="color: var(--ink-2);">Backups</span><span>Daily · 90d retention</span>
+                    <span style="color: var(--ink-2);">Analytics</span><span>Plausible</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <div class="panel-head">
+                  <div class="panel-title">Health checks</div>
+                  <div class="panel-action">Run all <i class="ti ti-refresh"></i></div>
+                </div>
+                <div class="task-row">
+                  <div class="task-check done"></div>
+                  <div class="task-name">SSL certificate valid</div>
+                  <div class="task-due">98 days</div>
+                </div>
+                <div class="task-row">
+                  <div class="task-check done"></div>
+                  <div class="task-name">WordPress core up to date</div>
+                  <div class="task-due">6.5.2</div>
+                </div>
+                <div class="task-row">
+                  <div class="task-check done"></div>
+                  <div class="task-name">All plugins updated</div>
+                  <div class="task-due">12 / 12</div>
+                </div>
+                <div class="task-row">
+                  <div class="task-check done"></div>
+                  <div class="task-name">Latest backup successful</div>
+                  <div class="task-due">2hr ago</div>
+                </div>
+                <div class="task-row">
+                  <div class="task-check"></div>
+                  <div class="task-name">Lighthouse score &gt; 90</div>
+                  <div class="task-due">87 · Mobile</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="siteActivity">
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Activity log</div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot task"><i class="ti ti-edit"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Wedding gallery section published</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin: 2px 0;">Added 24 new images. Tested cross-browser.</div>
+                  <div class="activity-time">May 11 · You</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot ok" style="background: var(--ok-soft); color: var(--ok);"><i class="ti ti-shield-check"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Security patch applied</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin: 2px 0;">WordPress core 6.5.1 → 6.5.2</div>
+                  <div class="activity-time">May 9 · Auto</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot task"><i class="ti ti-database"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Monthly backup completed</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin: 2px 0;">412 MB · stored in 3 locations</div>
+                  <div class="activity-time">May 4 · Auto</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot task"><i class="ti ti-rocket"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Mobile performance optimized</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin: 2px 0;">Load time: 2.4s → 1.6s on mobile</div>
+                  <div class="activity-time">Apr 28 · You</div>
+                </div>
+              </div>
+              <div class="activity-item">
+                <div class="activity-dot msg"><i class="ti ti-edit"></i></div>
+                <div class="activity-body">
+                  <div class="activity-title">Contact form updated</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin: 2px 0;">Added event date + arrangement type fields</div>
+                  <div class="activity-time">Apr 22 · You</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="siteAccess">
+            <div class="panel" style="padding: 0;">
+              <div class="panel-head">
+                <div class="panel-title">Credentials</div>
+                <div style="font-size: 11px; color: var(--ink-3);"><i class="ti ti-lock" style="vertical-align: -2px;"></i> Encrypted at rest</div>
+              </div>
+              <div style="padding: 20px;">
+                <div class="form-group">
+                  <label>Admin URL</label>
+                  <input type="text" value="https://desertbloomflorals.com/wp-admin" readonly />
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" value="onvex_admin" readonly />
+                  </div>
+                  <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" value="encrypted_value_here" readonly />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Domain registrar</label>
+                  <input type="text" value="Namecheap · login: maria@acmeflorals.com" readonly />
+                </div>
+                <div class="form-group">
+                  <label>Hosting</label>
+                  <input type="text" value="WP Engine · install: acmeflorals" readonly />
+                </div>
+                <button class="ghost-btn"><i class="ti ti-edit"></i> Edit credentials</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="siteFiles">
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Files</div>
+                <button class="ghost-btn"><i class="ti ti-upload"></i> Upload</button>
+              </div>
+              <div style="padding: 16px 20px;">
+                <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line);">
+                  <i class="ti ti-photo" style="color: var(--ink-3);"></i>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 500;">brand-guidelines-v2.pdf</div>
+                    <div style="font-size: 11px; color: var(--ink-3);">Brand assets · 2.4 MB</div>
+                  </div>
+                  <span style="font-size: 11px; color: var(--ink-3);">Mar 14</span>
+                  <i class="ti ti-download" style="color: var(--ink-3); cursor: pointer;"></i>
+                </div>
+                <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line);">
+                  <i class="ti ti-folder" style="color: var(--ink-3);"></i>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 500;">wedding-gallery-photos</div>
+                    <div style="font-size: 11px; color: var(--ink-3);">24 photos · 18.2 MB</div>
+                  </div>
+                  <span style="font-size: 11px; color: var(--ink-3);">May 11</span>
+                  <i class="ti ti-download" style="color: var(--ink-3); cursor: pointer;"></i>
+                </div>
+                <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line);">
+                  <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 500;">homepage-copy-final.docx</div>
+                    <div style="font-size: 11px; color: var(--ink-3);">Content · 12 KB</div>
+                  </div>
+                  <span style="font-size: 11px; color: var(--ink-3);">Mar 22</span>
+                  <i class="ti ti-download" style="color: var(--ink-3); cursor: pointer;"></i>
+                </div>
+                <div style="display: grid; grid-template-columns: 24px 1fr auto auto; gap: 12px; align-items: center; padding: 10px 0;">
+                  <i class="ti ti-file-text" style="color: var(--ink-3);"></i>
+                  <div>
+                    <div style="font-size: 13px; font-weight: 500;">contract-pro-plan.pdf</div>
+                    <div style="font-size: 11px; color: var(--ink-3);">Legal · 240 KB</div>
+                  </div>
+                  <span style="font-size: 11px; color: var(--ink-3);">Mar 3</span>
+                  <i class="ti ti-download" style="color: var(--ink-3); cursor: pointer;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="siteBilling">
+            <div class="info-grid">
+              <div class="info-cell">
+                <div class="info-label">Plan</div>
+                <div class="info-value">Pro · $240/mo</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">Lifetime revenue</div>
+                <div class="info-value">$3,360</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">Next bill</div>
+                <div class="info-value">Jun 1</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">Status</div>
+                <div class="info-value" style="color: var(--ok);">Active</div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Invoice history</div>
+              </div>
+              <div class="invoice-row">
+                <div>
+                  <div class="invoice-client">May 2026 · Pro plan</div>
+                  <div class="invoice-sub">#2052 · Paid May 1</div>
+                </div>
+                <div class="invoice-amt">$240.00</div>
+              </div>
+              <div class="invoice-row">
+                <div>
+                  <div class="invoice-client">April 2026 · Pro plan</div>
+                  <div class="invoice-sub">#2041 · Paid Apr 1</div>
+                </div>
+                <div class="invoice-amt">$240.00</div>
+              </div>
+              <div class="invoice-row">
+                <div>
+                  <div class="invoice-client">March 2026 · Pro plan</div>
+                  <div class="invoice-sub">#2028 · Paid Mar 1</div>
+                </div>
+                <div class="invoice-amt">$240.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLIENT DETAIL PAGE -->
+        <div class="page" id="page-client-detail">
+          <div class="breadcrumb">
+            <a onclick="goToPage('clients')">Clients</a>
+            <i class="ti ti-chevron-right"></i>
+            <span id="clientDetailCrumb">Acme Florals</span>
+          </div>
+
+          <div class="detail-header">
+            <div class="detail-title-group">
+              <div class="detail-avatar" id="clientDetailAvatar" style="background: #0EA5E9; color: #fff;">AF</div>
+              <div>
+                <div class="detail-title" id="clientDetailTitle">Acme Florals</div>
+                <div class="detail-sub">
+                  Maria Vasquez · Owner · maria@acmeflorals.com
+                </div>
+              </div>
+            </div>
+            <div class="detail-actions">
+              <button class="ghost-btn"><i class="ti ti-message-circle"></i> Message</button>
+              <button class="ghost-btn"><i class="ti ti-phone"></i> Call</button>
+              <button class="primary-btn"><i class="ti ti-edit"></i> Edit</button>
+            </div>
+          </div>
+
+          <div class="sub-tabs" data-tab-group="clientDetail">
+            <div class="sub-tab active" data-tab="clientOverview"><i class="ti ti-layout-dashboard"></i> Overview</div>
+            <div class="sub-tab" data-tab="clientSites"><i class="ti ti-world"></i> Sites</div>
+            <div class="sub-tab" data-tab="clientMessages"><i class="ti ti-message-circle"></i> Messages</div>
+            <div class="sub-tab" data-tab="clientBilling"><i class="ti ti-receipt"></i> Billing</div>
+            <div class="sub-tab" data-tab="clientNotes"><i class="ti ti-notebook"></i> Notes</div>
+          </div>
+
+          <div class="sub-tab-content active" data-content="clientOverview">
+            <div class="info-grid">
+              <div class="info-cell">
+                <div class="info-label">Client since</div>
+                <div class="info-value">March 2024</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">Active sites</div>
+                <div class="info-value">1</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">MRR</div>
+                <div class="info-value">$240</div>
+              </div>
+              <div class="info-cell">
+                <div class="info-label">Lifetime value</div>
+                <div class="info-value">$3,360</div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="panel">
+                <div class="panel-head">
+                  <div class="panel-title">Contact info</div>
+                  <div class="panel-action"><i class="ti ti-edit"></i></div>
+                </div>
+                <div style="padding: 16px 20px;">
+                  <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; font-size: 13px;">
+                    <span style="color: var(--ink-2);"><i class="ti ti-user" style="vertical-align: -2px; margin-right: 6px;"></i>Contact</span><span>Maria Vasquez</span>
+                    <span style="color: var(--ink-2);"><i class="ti ti-mail" style="vertical-align: -2px; margin-right: 6px;"></i>Email</span><span>maria@acmeflorals.com</span>
+                    <span style="color: var(--ink-2);"><i class="ti ti-phone" style="vertical-align: -2px; margin-right: 6px;"></i>Phone</span><span>(602) 555-0142</span>
+                    <span style="color: var(--ink-2);"><i class="ti ti-map-pin" style="vertical-align: -2px; margin-right: 6px;"></i>Address</span><span>1234 W Camelback Rd, Phoenix AZ</span>
+                    <span style="color: var(--ink-2);"><i class="ti ti-briefcase" style="vertical-align: -2px; margin-right: 6px;"></i>Industry</span><span>Retail / E-commerce</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel">
+                <div class="panel-head">
+                  <div class="panel-title">Recent activity</div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot msg"><i class="ti ti-message"></i></div>
+                  <div class="activity-body">
+                    <div class="activity-title">Sent a message about corporate arrangements</div>
+                    <div class="activity-time">12 min ago</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot pay"><i class="ti ti-check"></i></div>
+                  <div class="activity-body">
+                    <div class="activity-title">Paid invoice #2052</div>
+                    <div class="activity-time">May 1</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot task"><i class="ti ti-upload"></i></div>
+                  <div class="activity-body">
+                    <div class="activity-title">Uploaded 24 wedding photos</div>
+                    <div class="activity-time">May 10</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="clientSites">
+            <div class="panel">
+              <div class="site-row">
+                <div class="site-favicon">D</div>
+                <div>
+                  <div class="site-name">desertbloomflorals.com</div>
+                  <div class="site-meta">Pro plan · WordPress · Since Mar 2024</div>
+                </div>
+                <span class="pill ok">Healthy</span>
+                <div class="site-bill"><span class="amt">$240</span>/mo</div>
+                <div class="site-msg">100% uptime</div>
+                <i class="ti ti-chevron-right" style="color: var(--ink-3); font-size: 14px;"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="clientMessages">
+            <div class="msg-panel">
+              <div class="msg-bubble-list" style="max-height: 500px;">
+                <div>
+                  <div class="bubble them">Hi Maria! The new wedding gallery is live on your site.</div>
+                  <div class="bubble-meta">You · Yesterday 4:12pm</div>
+                </div>
+                <div style="align-self: flex-end; max-width: 70%;">
+                  <div class="bubble me">Looks beautiful! Could we add a section for corporate arrangements?</div>
+                  <div class="bubble-meta me">Maria · 12 min ago</div>
+                </div>
+              </div>
+              <div class="thread-input">
+                <input type="text" placeholder="Reply to Maria…" />
+                <button class="send-btn"><i class="ti ti-arrow-up"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="clientBilling">
+            <div class="table">
+              <div class="table-head">
+                <div>INVOICE</div>
+                <div>DATE</div>
+                <div>DESCRIPTION</div>
+                <div>AMOUNT</div>
+                <div>STATUS</div>
+                <div></div>
+              </div>
+              <div class="table-row">
+                <div class="mono">#2052</div>
+                <div>May 1, 2026</div>
+                <div style="color: var(--ink-2);">Pro plan · May</div>
+                <div class="mono">$240.00</div>
+                <div><span class="pill ok">Paid</span></div>
+                <div><i class="ti ti-download" style="color: var(--ink-3); cursor: pointer;"></i></div>
+              </div>
+              <div class="table-row">
+                <div class="mono">#2041</div>
+                <div>Apr 1, 2026</div>
+                <div style="color: var(--ink-2);">Pro plan · April</div>
+                <div class="mono">$240.00</div>
+                <div><span class="pill ok">Paid</span></div>
+                <div><i class="ti ti-download" style="color: var(--ink-3); cursor: pointer;"></i></div>
+              </div>
+              <div class="table-row">
+                <div class="mono">#2028</div>
+                <div>Mar 1, 2026</div>
+                <div style="color: var(--ink-2);">Pro plan · March</div>
+                <div class="mono">$240.00</div>
+                <div><span class="pill ok">Paid</span></div>
+                <div><i class="ti ti-download" style="color: var(--ink-3); cursor: pointer;"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub-tab-content" data-content="clientNotes">
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Notes</div>
+                <button class="ghost-btn"><i class="ti ti-plus"></i> Add note</button>
+              </div>
+              <div style="padding: 16px 20px;">
+                <div style="padding: 14px; background: var(--surface-2); border-radius: 8px; margin-bottom: 12px;">
+                  <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 4px;">Apr 12 · You</div>
+                  <div style="font-size: 13px; line-height: 1.5;">Maria prefers email over phone calls. Best reach window: 9am-2pm. Loves photography content. Considering expanding to corporate clients — might be upsell opportunity for ad campaign.</div>
+                </div>
+                <div style="padding: 14px; background: var(--surface-2); border-radius: 8px;">
+                  <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 4px;">Mar 4 · You</div>
+                  <div style="font-size: 13px; line-height: 1.5;">Initial discovery call. Acme Florals is family-owned, 8 years in Phoenix. Wants website to feel "warm but professional." Found us through Mojave Market referral.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   </div>
@@ -2535,6 +4747,50 @@
           </div>
         </div>
         <div class="cust-user">
+          <div class="notif-bell" id="custNotifBell" style="position: relative;">
+            <i class="ti ti-bell" style="font-size: 20px;"></i>
+            <span class="notif-dot"></span>
+            <div class="notif-panel" id="custNotifPanel">
+              <div class="notif-panel-head">
+                <div class="notif-panel-title">Notifications</div>
+                <div class="notif-panel-action">Mark all read</div>
+              </div>
+              <div class="notif-list">
+                <div class="notif-li unread">
+                  <div class="notif-li-icon" style="background: var(--ok-soft); color: var(--ok);"><i class="ti ti-check"></i></div>
+                  <div class="notif-li-body">
+                    <div class="notif-li-title">Site updated</div>
+                    <div class="notif-li-text">Your wedding gallery is now live with 24 new photos.</div>
+                    <div class="notif-li-time">2 hours ago</div>
+                  </div>
+                </div>
+                <div class="notif-li unread">
+                  <div class="notif-li-icon" style="background: var(--accent-soft); color: var(--accent);"><i class="ti ti-message-circle"></i></div>
+                  <div class="notif-li-body">
+                    <div class="notif-li-title">New message from OnVex</div>
+                    <div class="notif-li-text">"The new wedding gallery is live on your site!"</div>
+                    <div class="notif-li-time">Yesterday 4:12pm</div>
+                  </div>
+                </div>
+                <div class="notif-li">
+                  <div class="notif-li-icon" style="background: var(--info-soft); color: var(--info);"><i class="ti ti-chart-bar"></i></div>
+                  <div class="notif-li-body">
+                    <div class="notif-li-title">April report ready</div>
+                    <div class="notif-li-text">Your monthly performance report is available.</div>
+                    <div class="notif-li-time">May 1</div>
+                  </div>
+                </div>
+                <div class="notif-li">
+                  <div class="notif-li-icon" style="background: var(--ok-soft); color: var(--ok);"><i class="ti ti-receipt"></i></div>
+                  <div class="notif-li-body">
+                    <div class="notif-li-title">Invoice paid</div>
+                    <div class="notif-li-text">Invoice #2052 for $240.00 has been paid.</div>
+                    <div class="notif-li-time">May 1</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="cust-user-info">
             <div class="cust-user-name">Maria Vasquez</div>
             <div class="cust-user-co">Acme Florals</div>
@@ -2546,10 +4802,14 @@
       <!-- Customer tabs -->
       <div class="cust-tabs">
         <div class="cust-tab active" data-cust-page="home"><i class="ti ti-home"></i> Home</div>
+        <div class="cust-tab" data-cust-page="project"><i class="ti ti-rocket"></i> Project</div>
         <div class="cust-tab" data-cust-page="messages"><i class="ti ti-message-circle"></i> Messages</div>
+        <div class="cust-tab" data-cust-page="reports"><i class="ti ti-chart-bar"></i> Reports</div>
         <div class="cust-tab" data-cust-page="billing"><i class="ti ti-credit-card"></i> Billing</div>
         <div class="cust-tab" data-cust-page="updates"><i class="ti ti-history"></i> Updates</div>
         <div class="cust-tab" data-cust-page="requests"><i class="ti ti-edit"></i> Requests</div>
+        <div class="cust-tab" data-cust-page="referrals"><i class="ti ti-users"></i> Referrals</div>
+        <div class="cust-tab" data-cust-page="help"><i class="ti ti-help-circle"></i> Help</div>
       </div>
 
       <!-- HOME -->
@@ -2940,6 +5200,367 @@
         </div>
       </div>
 
+      <!-- CUSTOMER PROJECT PAGE -->
+      <div class="page" id="cust-page-project">
+        <div class="project-hero">
+          <div class="project-name">Corporate arrangement section</div>
+          <div class="project-stage">In progress · Design phase</div>
+          <div class="project-progress">
+            <div class="project-bar-track">
+              <div class="project-bar-fill" style="width: 45%;"></div>
+            </div>
+            <div class="project-progress-label">3 of 7 milestones complete · Expected launch May 28</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+          <h2 style="font-family: var(--font-display); font-size: 22px; color: var(--ink);">Milestones</h2>
+          <span style="font-size: 12px; color: var(--ink-2);">Auto-updated by OnVex</span>
+        </div>
+
+        <div class="milestone-list">
+          <div class="milestone done">
+            <div class="milestone-icon"><i class="ti ti-check"></i></div>
+            <div>
+              <div class="milestone-title">Discovery call</div>
+              <div class="milestone-desc">Discussed goals, audience, brand fit</div>
+            </div>
+            <div class="milestone-meta">May 2</div>
+          </div>
+          <div class="milestone done">
+            <div class="milestone-icon"><i class="ti ti-check"></i></div>
+            <div>
+              <div class="milestone-title">Content gathering</div>
+              <div class="milestone-desc">Photos and copy approved</div>
+            </div>
+            <div class="milestone-meta">May 6</div>
+          </div>
+          <div class="milestone done">
+            <div class="milestone-icon"><i class="ti ti-check"></i></div>
+            <div>
+              <div class="milestone-title">Wireframes approved</div>
+              <div class="milestone-desc">Layout signed off via email</div>
+            </div>
+            <div class="milestone-meta">May 10</div>
+          </div>
+          <div class="milestone current">
+            <div class="milestone-icon"><i class="ti ti-pencil"></i></div>
+            <div>
+              <div class="milestone-title">Design mockups <span style="color: var(--warn); font-size: 11px; margin-left: 6px;">Awaiting your review</span></div>
+              <div class="milestone-desc">Visual designs sent for approval · <a style="color: var(--accent); cursor: pointer;">View mockups</a></div>
+            </div>
+            <div class="milestone-meta">May 13</div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-icon"><i class="ti ti-code"></i></div>
+            <div>
+              <div class="milestone-title">Development</div>
+              <div class="milestone-desc">Build out approved designs</div>
+            </div>
+            <div class="milestone-meta">~May 20</div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-icon"><i class="ti ti-check-list"></i></div>
+            <div>
+              <div class="milestone-title">QA &amp; review</div>
+              <div class="milestone-desc">Cross-browser testing and your final approval</div>
+            </div>
+            <div class="milestone-meta">~May 25</div>
+          </div>
+          <div class="milestone">
+            <div class="milestone-icon"><i class="ti ti-rocket"></i></div>
+            <div>
+              <div class="milestone-title">Launch</div>
+              <div class="milestone-desc">Pushed live · monitoring &amp; performance check</div>
+            </div>
+            <div class="milestone-meta">~May 28</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; padding: 20px; background: var(--info-soft); border-radius: 12px; display: flex; gap: 14px;">
+          <i class="ti ti-info-circle" style="font-size: 22px; color: var(--info); flex-shrink: 0;"></i>
+          <div>
+            <div style="font-size: 14px; font-weight: 500; color: var(--info); margin-bottom: 4px;">Action needed: review mockups</div>
+            <div style="font-size: 13px; color: var(--ink-2);">We've sent you 3 design directions for the corporate section. Please review and let us know which you'd like to move forward with. <a style="color: var(--accent); cursor: pointer;">Review now →</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMER REPORTS PAGE -->
+      <div class="page" id="cust-page-reports">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-family: var(--font-display); font-size: 24px; color: var(--ink); margin-bottom: 4px;">Monthly reports</h2>
+          <div style="font-size: 13px; color: var(--ink-2);">How your site and ads performed each month</div>
+        </div>
+
+        <div class="report-card">
+          <div class="report-card-head">
+            <div>
+              <div class="report-month">April 2026</div>
+              <div class="report-meta">Pro plan · desertbloomflorals.com</div>
+            </div>
+            <button class="ghost-btn"><i class="ti ti-download"></i> Download PDF</button>
+          </div>
+          <div class="report-stats">
+            <div class="report-stat">
+              <div class="report-stat-label">Visitors</div>
+              <div class="report-stat-value">2,847</div>
+              <div class="report-stat-change">+18% vs March</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">New leads</div>
+              <div class="report-stat-value">42</div>
+              <div class="report-stat-change">+12% vs March</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">Avg load time</div>
+              <div class="report-stat-value">1.4s</div>
+              <div class="report-stat-change">-0.3s improved</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">Uptime</div>
+              <div class="report-stat-value">100%</div>
+              <div class="report-stat-change">No downtime</div>
+            </div>
+          </div>
+          <div style="font-size: 13px; color: var(--ink-2); line-height: 1.6; padding: 16px; background: var(--surface-2); border-radius: 8px;">
+            <strong style="color: var(--ink);">Highlights:</strong> Traffic up 18% month-over-month. Mobile load time improvements pushed your Lighthouse score from 84 to 91. New "wedding gallery" section drove 312 visits in its first week. Recommend continuing focus on photo-driven content.
+          </div>
+        </div>
+
+        <div class="report-card">
+          <div class="report-card-head">
+            <div>
+              <div class="report-month">March 2026</div>
+              <div class="report-meta">Pro plan · desertbloomflorals.com</div>
+            </div>
+            <button class="ghost-btn"><i class="ti ti-download"></i> Download PDF</button>
+          </div>
+          <div class="report-stats">
+            <div class="report-stat">
+              <div class="report-stat-label">Visitors</div>
+              <div class="report-stat-value">2,418</div>
+              <div class="report-stat-change">+8% vs Feb</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">New leads</div>
+              <div class="report-stat-value">37</div>
+              <div class="report-stat-change">+22% vs Feb</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">Avg load time</div>
+              <div class="report-stat-value">1.7s</div>
+              <div class="report-stat-change down">+0.1s</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">Uptime</div>
+              <div class="report-stat-value">99.94%</div>
+              <div class="report-stat-change down">2 min downtime</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="report-card">
+          <div class="report-card-head">
+            <div>
+              <div class="report-month">February 2026</div>
+              <div class="report-meta">Pro plan · desertbloomflorals.com</div>
+            </div>
+            <button class="ghost-btn"><i class="ti ti-download"></i> Download PDF</button>
+          </div>
+          <div class="report-stats">
+            <div class="report-stat">
+              <div class="report-stat-label">Visitors</div>
+              <div class="report-stat-value">2,238</div>
+              <div class="report-stat-change">+5% vs Jan</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">New leads</div>
+              <div class="report-stat-value">30</div>
+              <div class="report-stat-change">+8% vs Jan</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">Avg load time</div>
+              <div class="report-stat-value">1.6s</div>
+              <div class="report-stat-change">-0.2s</div>
+            </div>
+            <div class="report-stat">
+              <div class="report-stat-label">Uptime</div>
+              <div class="report-stat-value">100%</div>
+              <div class="report-stat-change">No downtime</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMER REFERRALS PAGE -->
+      <div class="page" id="cust-page-referrals">
+        <div class="referral-hero">
+          <div style="font-size: 13px; opacity: 0.8; text-transform: uppercase; letter-spacing: 0.1em;">Refer a friend</div>
+          <div class="referral-amount">Get $200 off</div>
+          <div style="font-size: 14px; opacity: 0.95; max-width: 400px; margin: 0 auto;">
+            Refer a business owner to OnVex. When they sign on, you both get $200 credit toward your next invoice.
+          </div>
+          <div class="referral-code">
+            <span>MARIA-AC-203</span>
+            <button>Copy</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">How it works</div>
+            </div>
+            <div style="padding: 16px 20px;">
+              <div style="display: flex; gap: 14px; margin-bottom: 16px;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; flex-shrink: 0;">1</div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 500;">Share your code</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin-top: 2px;">Send it to a business owner you think we could help</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px; margin-bottom: 16px;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; flex-shrink: 0;">2</div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 500;">They sign on</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin-top: 2px;">They mention your code when they hire us</div>
+                </div>
+              </div>
+              <div style="display: flex; gap: 14px;">
+                <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--ok-soft); color: var(--ok); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; flex-shrink: 0;">3</div>
+                <div>
+                  <div style="font-size: 14px; font-weight: 500;">You both get $200</div>
+                  <div style="font-size: 12px; color: var(--ink-2); margin-top: 2px;">Credit applied to your next invoice automatically</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Your referrals</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot pay"><i class="ti ti-check"></i></div>
+              <div class="activity-body">
+                <div class="activity-title">Mojave Market</div>
+                <div style="font-size: 12px; color: var(--ink-2);">Signed Apr 2026 · $200 credit applied</div>
+              </div>
+              <span class="pill ok">Earned</span>
+            </div>
+            <div class="activity-item">
+              <div class="activity-dot msg"><i class="ti ti-clock"></i></div>
+              <div class="activity-body">
+                <div class="activity-title">Sonoran Legal</div>
+                <div style="font-size: 12px; color: var(--ink-2);">In discussion since Jan 2026</div>
+              </div>
+              <span class="pill warn">Pending</span>
+            </div>
+            <div style="padding: 16px 20px; text-align: center; color: var(--ink-3); font-size: 13px;">
+              <i class="ti ti-share" style="font-size: 24px; display: block; margin: 0 auto 8px;"></i>
+              Share your code to refer more
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMER HELP / FAQ PAGE -->
+      <div class="page" id="cust-page-help">
+        <div style="margin-bottom: 20px;">
+          <h2 style="font-family: var(--font-display); font-size: 24px; color: var(--ink); margin-bottom: 4px;">Help &amp; FAQ</h2>
+          <div style="font-size: 13px; color: var(--ink-2);">Common questions about your account, billing, and services</div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 24px;">
+          <div class="quick-btn" style="cursor: pointer;">
+            <i class="ti ti-message-circle" style="font-size: 24px; color: var(--accent);"></i>
+            <div class="quick-btn-label">Message your team</div>
+            <div class="quick-btn-sub">Usually reply within 2 hours</div>
+          </div>
+          <div class="quick-btn" style="cursor: pointer;">
+            <i class="ti ti-calendar" style="font-size: 24px; color: var(--accent);"></i>
+            <div class="quick-btn-label">Schedule a call</div>
+            <div class="quick-btn-sub">Pick a time that works</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div class="panel-title">Frequently asked</div>
+          </div>
+          <div class="faq-item open">
+            <div class="faq-question">
+              How do I update my credit card?
+              <i class="ti ti-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              Go to the <strong>Billing</strong> tab and click "Update payment method." Your card is processed securely through Stripe — we never see or store your full card number.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              What's included in my Pro plan?
+              <i class="ti ti-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              Your Pro plan includes: unlimited content updates (typically completed within 48 hours), monthly performance reports, daily backups, security monitoring, SSL renewal, plugin/CMS updates, priority message support, and up to 8 hours of design/dev work per month for new features.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              How do I request a change to my site?
+              <i class="ti ti-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              The fastest way is through the <strong>Requests</strong> tab — fill out the form with what you need and we'll get on it. For quick questions, the <strong>Messages</strong> tab is even faster. Both go to the same team.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              How long do changes take?
+              <i class="ti ti-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              Most content updates (text, photos, hours, contact info) are done within 24-48 hours. Design changes typically take 3-5 business days depending on scope. New features and larger projects get a custom timeline at kickoff.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              Can I cancel my plan?
+              <i class="ti ti-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              Yes, anytime. Pro and Starter plans are month-to-month — just message your team or email support@onvex.dev. We'll prorate any unused time and hand over all your assets and credentials before closing the account.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              Who owns my website?
+              <i class="ti ti-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              You do. You own your domain, content, design files, and the site itself. We don't lock you in — if you ever leave, you take everything with you.
+            </div>
+          </div>
+          <div class="faq-item">
+            <div class="faq-question">
+              How do I get a copy of my files?
+              <i class="ti ti-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+              Check the Files section on your site's detail page, or message us — we'll send a download link for backups, brand assets, and any files we have on record.
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; padding: 20px; background: var(--surface-2); border-radius: 12px; text-align: center;">
+          <div style="font-size: 14px; font-weight: 500; margin-bottom: 4px;">Didn't find your answer?</div>
+          <div style="font-size: 13px; color: var(--ink-2); margin-bottom: 12px;">We're real humans, not bots. Reach out anytime.</div>
+          <button class="primary-btn"><i class="ti ti-mail"></i> Email support@onvex.dev</button>
+        </div>
+      </div>
+
       <div class="foot">
         <div>OnVex Web Development · Designed in Phoenix, AZ</div>
         <div>Need anything? <span style="color: var(--accent); cursor: pointer;">Text us</span></div>
@@ -2949,6 +5570,18 @@
   </div>
 
 <script>
+  // =========================================================
+  // DARK MODE TOGGLE
+  // =========================================================
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+    });
+  }
+
   // Mobile menu toggle
   const sidebar = document.querySelector('#view-admin .sidebar');
   const menuBtn = document.getElementById('mobileMenuBtn');
@@ -3020,6 +5653,751 @@
       item.classList.add('active');
     });
   });
+
+  // =========================================================
+  // AUTH VIEW SWITCHING
+  // =========================================================
+  function switchAuth(screen) {
+    document.querySelectorAll('.auth-view').forEach(v => v.classList.remove('active'));
+    const el = document.getElementById('auth-' + screen);
+    if (el) el.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function switchView(view) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + view).classList.add('active');
+    document.querySelectorAll('.switcher button').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === view);
+    });
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    if (menuBtn) menuBtn.style.display = (view === 'admin') ? '' : 'none';
+    closeSidebar();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Role pick toggle in login
+  document.querySelectorAll('.auth-role-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.auth-role-pick').querySelectorAll('.auth-role-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+
+  document.querySelectorAll('.sub-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.closest('.sub-tabs');
+      const tabName = tab.dataset.tab;
+      group.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const page = group.closest('.page');
+      page.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
+      const content = page.querySelector(`.sub-tab-content[data-content="${tabName}"]`);
+      if (content) content.classList.add('active');
+    });
+  });
+
+  // =========================================================
+  // UPTIME BARS — render 30 days of mostly-green status bars
+  // =========================================================
+  function renderUptimeBars() {
+    const container = document.getElementById('uptimeBars');
+    if (!container) return;
+    container.innerHTML = '';
+    const days = 30;
+    const warnDays = [9, 22];
+    for (let i = 0; i < days; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'uptime-day';
+      if (warnDays.includes(i)) bar.classList.add('warn');
+      const date = new Date();
+      date.setDate(date.getDate() - (days - i - 1));
+      const label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      bar.title = warnDays.includes(i)
+        ? `${label} · brief slowdown (4 min)`
+        : `${label} · 100% uptime`;
+      container.appendChild(bar);
+    }
+  }
+  renderUptimeBars();
+
+  // =========================================================
+  // SITE ROW + CLIENT CARD → DETAIL PAGE NAVIGATION
+  // =========================================================
+  // Make all site rows in admin views clickable to go to site detail
+  function wireSiteRows() {
+    document.querySelectorAll('#view-admin .site-row').forEach(row => {
+      if (row.dataset.wired) return;
+      row.dataset.wired = '1';
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('button, a, input, .pill')) return;
+        const nameEl = row.querySelector('.site-name');
+        const faviconEl = row.querySelector('.site-favicon');
+        if (nameEl) {
+          document.getElementById('siteDetailTitle').textContent = nameEl.textContent;
+          document.getElementById('siteDetailCrumb').textContent = nameEl.textContent;
+        }
+        if (faviconEl) {
+          document.getElementById('siteDetailAvatar').textContent = faviconEl.textContent;
+        }
+        goToPage('site-detail');
+        renderUptimeBars();
+      });
+    });
+  }
+  wireSiteRows();
+
+  // Make client cards clickable
+  document.querySelectorAll('#view-admin .client-card').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('button, a, input')) return;
+      const nameEl = card.querySelector('.client-name');
+      const avatarEl = card.querySelector('.client-avatar');
+      if (nameEl) {
+        document.getElementById('clientDetailTitle').textContent = nameEl.textContent;
+        document.getElementById('clientDetailCrumb').textContent = nameEl.textContent;
+      }
+      if (avatarEl) {
+        const detailAvatar = document.getElementById('clientDetailAvatar');
+        detailAvatar.textContent = avatarEl.textContent;
+        detailAvatar.style.background = avatarEl.style.background;
+      }
+      goToPage('client-detail');
+    });
+  });
+
+  // =========================================================
+  // TIME TRACKER
+  // =========================================================
+  let timerRunning = false;
+  let timerStart = null;
+  let timerElapsed = 0;
+  let timerInterval = null;
+
+  function formatTime(ms) {
+    const total = Math.floor(ms / 1000);
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }
+  function updateTimerDisplay() {
+    const display = document.getElementById('timerDisplay');
+    if (!display) return;
+    const current = timerRunning ? (Date.now() - timerStart + timerElapsed) : timerElapsed;
+    display.textContent = formatTime(current);
+  }
+  const timerToggleBtn = document.getElementById('timerToggleBtn');
+  if (timerToggleBtn) {
+    timerToggleBtn.addEventListener('click', () => {
+      if (!timerRunning) {
+        timerRunning = true;
+        timerStart = Date.now();
+        document.getElementById('timerTask').textContent = 'Site updates · Acme Florals';
+        document.getElementById('timerClient').textContent = 'Tracking against Pro plan retainer';
+        timerToggleBtn.innerHTML = '<i class="ti ti-player-pause"></i> Stop';
+        timerToggleBtn.classList.add('stop');
+        timerInterval = setInterval(updateTimerDisplay, 1000);
+      } else {
+        timerRunning = false;
+        timerElapsed += Date.now() - timerStart;
+        timerToggleBtn.innerHTML = '<i class="ti ti-player-play"></i> Resume';
+        timerToggleBtn.classList.remove('stop');
+        clearInterval(timerInterval);
+      }
+      updateTimerDisplay();
+    });
+  }
+
+  // =========================================================
+  // LEAD CARDS — click opens new lead modal (placeholder edit flow)
+  // =========================================================
+  document.querySelectorAll('.lead-card').forEach(card => {
+    card.addEventListener('click', () => {
+      openModal('newLeadModal');
+    });
+  });
+
+  // =========================================================
+  // CUSTOMER NOTIFICATION BELL TOGGLE
+  // =========================================================
+  const notifBell = document.getElementById('custNotifBell');
+  if (notifBell) {
+    notifBell.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.getElementById('custNotifPanel').classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+      if (!notifBell.contains(e.target)) {
+        const panel = document.getElementById('custNotifPanel');
+        if (panel) panel.classList.remove('open');
+      }
+    });
+  }
+
+  // =========================================================
+  // FAQ ACCORDION
+  // =========================================================
+  document.querySelectorAll('.faq-question').forEach(q => {
+    q.addEventListener('click', () => {
+      q.closest('.faq-item').classList.toggle('open');
+    });
+  });
+
+  // =========================================================
+  // COMMAND PALETTE (⌘K / Ctrl+K)
+  // =========================================================
+  const cmdkData = [
+    { type: 'page', label: 'Overview', icon: 'ti-layout-dashboard', action: () => goToPage('overview'), section: 'Pages' },
+    { type: 'page', label: 'Sites', icon: 'ti-world', action: () => goToPage('sites'), section: 'Pages' },
+    { type: 'page', label: 'Clients', icon: 'ti-users', action: () => goToPage('clients'), section: 'Pages' },
+    { type: 'page', label: 'Leads pipeline', icon: 'ti-target', action: () => goToPage('leads'), section: 'Pages' },
+    { type: 'page', label: 'Messages', icon: 'ti-message-circle', action: () => goToPage('messages'), section: 'Pages' },
+    { type: 'page', label: 'Billing', icon: 'ti-receipt', action: () => goToPage('billing'), section: 'Pages' },
+    { type: 'page', label: 'Reports', icon: 'ti-chart-line', action: () => goToPage('reports'), section: 'Pages' },
+    { type: 'page', label: 'Time tracking', icon: 'ti-clock', action: () => goToPage('time'), section: 'Pages' },
+    { type: 'page', label: 'Tasks', icon: 'ti-checkbox', action: () => goToPage('tasks'), section: 'Pages' },
+    { type: 'page', label: 'Settings', icon: 'ti-settings', action: () => goToPage('settings'), section: 'Pages' },
+    { type: 'action', label: 'New site', icon: 'ti-plus', meta: 'Onboard a new client site', action: () => openModal('newSiteModal'), section: 'Quick actions' },
+    { type: 'action', label: 'New client', icon: 'ti-user-plus', meta: 'Add a client to your roster', action: () => openModal('newClientModal'), section: 'Quick actions' },
+    { type: 'action', label: 'New lead', icon: 'ti-target', meta: 'Track a new prospect', action: () => openModal('newLeadModal'), section: 'Quick actions' },
+    { type: 'site', label: 'desertbloomflorals.com', icon: 'ti-world', meta: 'Acme Florals · Pro', action: () => goToPage('site-detail'), section: 'Sites' },
+    { type: 'site', label: 'redrockdental.com', icon: 'ti-world', meta: 'Red Rock Dental · Pro', action: () => goToPage('sites'), section: 'Sites' },
+    { type: 'site', label: 'sonoranlegal.com', icon: 'ti-world', meta: 'Sonoran Legal · Pro+Ads', action: () => goToPage('sites'), section: 'Sites' },
+    { type: 'client', label: 'Acme Florals', icon: 'ti-user', meta: 'Maria Vasquez', action: () => goToPage('client-detail'), section: 'Clients' },
+    { type: 'client', label: 'Red Rock Dental', icon: 'ti-user', meta: 'Dr. Patel', action: () => goToPage('clients'), section: 'Clients' },
+    { type: 'client', label: 'Sonoran Legal', icon: 'ti-user', meta: 'James Sullivan', action: () => goToPage('clients'), section: 'Clients' },
+  ];
+
+  let cmdkSelected = 0;
+  let cmdkFiltered = cmdkData.slice();
+
+  function renderCmdkResults() {
+    const results = document.getElementById('cmdkResults');
+    if (cmdkFiltered.length === 0) {
+      results.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--ink-3); font-size: 13px;">No matches found</div>';
+      return;
+    }
+    let html = '';
+    let currentSection = null;
+    cmdkFiltered.forEach((item, i) => {
+      if (item.section !== currentSection) {
+        if (currentSection !== null) html += '';
+        html += `<div class="cmdk-section">${item.section}</div>`;
+        currentSection = item.section;
+      }
+      const sel = i === cmdkSelected ? 'selected' : '';
+      const meta = item.meta ? `<span class="cmdk-item-meta">${item.meta}</span>` : '';
+      html += `<div class="cmdk-item ${sel}" data-idx="${i}"><i class="ti ${item.icon}"></i><span class="cmdk-item-text">${item.label}</span>${meta}</div>`;
+    });
+    results.innerHTML = html;
+    results.querySelectorAll('.cmdk-item').forEach(el => {
+      el.addEventListener('click', () => {
+        cmdkSelected = parseInt(el.dataset.idx);
+        cmdkExecute();
+      });
+    });
+  }
+
+  function cmdkExecute() {
+    const item = cmdkFiltered[cmdkSelected];
+    if (!item) return;
+    closeCmdk();
+    setTimeout(() => item.action(), 50);
+  }
+
+  function openCmdk() {
+    cmdkFiltered = cmdkData.slice();
+    cmdkSelected = 0;
+    renderCmdkResults();
+    document.getElementById('cmdkOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('cmdkInput').focus(), 50);
+  }
+  function closeCmdk() {
+    document.getElementById('cmdkOverlay').classList.remove('open');
+    document.getElementById('cmdkInput').value = '';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('cmdkInput').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    cmdkFiltered = q
+      ? cmdkData.filter(i => i.label.toLowerCase().includes(q) || (i.meta && i.meta.toLowerCase().includes(q)))
+      : cmdkData.slice();
+    cmdkSelected = 0;
+    renderCmdkResults();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const isOpen = document.getElementById('cmdkOverlay').classList.contains('open');
+    // ⌘K / Ctrl+K
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      if (isOpen) closeCmdk();
+      else openCmdk();
+      return;
+    }
+    if (!isOpen) return;
+    if (e.key === 'Escape') { e.preventDefault(); closeCmdk(); }
+    else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      cmdkSelected = Math.min(cmdkSelected + 1, cmdkFiltered.length - 1);
+      renderCmdkResults();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      cmdkSelected = Math.max(cmdkSelected - 1, 0);
+      renderCmdkResults();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      cmdkExecute();
+    }
+  });
+
+  document.getElementById('cmdkOverlay').addEventListener('click', (e) => {
+    if (e.target.id === 'cmdkOverlay') closeCmdk();
+  });
+
+  // Click on the .search bar to open command palette
+  document.querySelectorAll('.search').forEach(s => {
+    s.style.cursor = 'pointer';
+    s.addEventListener('click', openCmdk);
+  });
+
+  // =========================================================
+  // MESSAGE INPUT — actually post bubbles
+  // =========================================================
+  function wireMessageInputs() {
+    document.querySelectorAll('.thread-input, .msg-input').forEach(container => {
+      if (container.dataset.wired) return;
+      container.dataset.wired = '1';
+      const input = container.querySelector('input');
+      const button = container.querySelector('.send-btn') || container.querySelector('button');
+      if (!input || !button) return;
+
+      const sendMessage = () => {
+        const text = input.value.trim();
+        if (!text) return;
+        const panel = container.closest('.msg-panel') || container.parentElement;
+        const bubbleList = panel.querySelector('.msg-bubble-list');
+        if (bubbleList) {
+          const wrap = document.createElement('div');
+          wrap.style.alignSelf = 'flex-end';
+          wrap.style.maxWidth = '70%';
+          wrap.innerHTML = `
+            <div class="bubble me">${text.replace(/</g, '&lt;')}</div>
+            <div class="bubble-meta me">You · Just now</div>
+          `;
+          bubbleList.appendChild(wrap);
+          bubbleList.scrollTop = bubbleList.scrollHeight;
+        }
+        input.value = '';
+      };
+
+      button.addEventListener('click', sendMessage);
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+    });
+  }
+  wireMessageInputs();
+
+  // =========================================================
+  // TASK CHECKBOXES — persist state in memory across nav
+  // =========================================================
+  const taskState = {};
+  document.querySelectorAll('.task-check').forEach((check, i) => {
+    const key = 'task-' + i;
+    if (check.classList.contains('done')) taskState[key] = true;
+    check.dataset.taskKey = key;
+    check.addEventListener('click', () => {
+      taskState[key] = !taskState[key];
+      check.classList.toggle('done', taskState[key]);
+    });
+  });
+
+
+  function openModal(id) {
+    document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    if (id) document.getElementById(id).classList.remove('open');
+    else document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    document.body.style.overflow = '';
+  }
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal();
+    });
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // =========================================================
+  // WIZARD STEP NAVIGATION
+  // =========================================================
+  function wizardGoTo(wizardId, stepIndex) {
+    const wizard = document.getElementById(wizardId);
+    const steps = wizard.querySelectorAll('.wizard-step');
+    const pages = wizard.querySelectorAll('.wizard-page');
+    steps.forEach((s, i) => {
+      s.classList.remove('active', 'done');
+      if (i < stepIndex) s.classList.add('done');
+      if (i === stepIndex) s.classList.add('active');
+    });
+    pages.forEach((p, i) => p.classList.toggle('active', i === stepIndex));
+    const foot = wizard.querySelector('.modal-foot');
+    if (foot) {
+      const back = foot.querySelector('[data-action="back"]');
+      const next = foot.querySelector('[data-action="next"]');
+      const finish = foot.querySelector('[data-action="finish"]');
+      if (back) back.style.visibility = stepIndex === 0 ? 'hidden' : 'visible';
+      if (next && finish) {
+        const isLast = stepIndex === pages.length - 1;
+        next.style.display = isLast ? 'none' : '';
+        finish.style.display = isLast ? '' : 'none';
+      }
+    }
+  }
+
+  // Plan card selection
+  document.querySelectorAll('.plan-picker').forEach(picker => {
+    picker.querySelectorAll('.plan-card').forEach(card => {
+      card.addEventListener('click', () => {
+        picker.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+      });
+    });
+  });
+</script>
+
+<!-- ============ COMMAND PALETTE (⌘K) ============ -->
+<div class="cmdk-overlay" id="cmdkOverlay">
+  <div class="cmdk-modal">
+    <div class="cmdk-search">
+      <i class="ti ti-search"></i>
+      <input type="text" id="cmdkInput" placeholder="Search sites, clients, invoices, or jump to a page…" />
+      <span class="cmdk-footer" style="border: none; padding: 0;"><kbd>esc</kbd></span>
+    </div>
+    <div class="cmdk-results" id="cmdkResults"></div>
+    <div class="cmdk-footer">
+      <span><kbd>↑↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> select</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NEW SITE WIZARD ============ -->
+<div class="modal-overlay" id="newSiteModal">
+  <div class="modal" id="newSiteWizard">
+    <div class="modal-head">
+      <div class="modal-title">Add a new site</div>
+      <button class="modal-close" onclick="closeModal('newSiteModal')" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="wizard-steps">
+      <div class="wizard-step active">Client</div>
+      <div class="wizard-step">Site</div>
+      <div class="wizard-step">Plan</div>
+      <div class="wizard-step">Access</div>
+    </div>
+
+    <div class="modal-body">
+      <div class="wizard-page active">
+        <div class="form-group">
+          <label>Which client? <span class="req">*</span></label>
+          <select>
+            <option>Select existing client…</option>
+            <option>Acme Florals</option>
+            <option>Red Rock Dental</option>
+            <option>Sonoran Legal</option>
+            <option>+ Add new client</option>
+          </select>
+        </div>
+        <div style="font-size: 12px; color: var(--ink-2); padding: 12px; background: var(--surface-2); border-radius: 8px;">
+          <i class="ti ti-info-circle" style="vertical-align: -2px; margin-right: 4px;"></i>
+          New client? Pick "Add new client" and you'll be able to enter their details on the next step.
+        </div>
+      </div>
+
+      <div class="wizard-page">
+        <div class="form-group">
+          <label>Site name <span class="req">*</span></label>
+          <input type="text" placeholder="e.g. Acme Florals Main Site" />
+        </div>
+        <div class="form-group">
+          <label>Domain <span class="req">*</span></label>
+          <input type="text" placeholder="acmeflorals.com" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Platform</label>
+            <select>
+              <option>WordPress</option>
+              <option>Webflow</option>
+              <option>Shopify</option>
+              <option>Squarespace</option>
+              <option>Custom / Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Hosting</label>
+            <select>
+              <option>WP Engine</option>
+              <option>Kinsta</option>
+              <option>SiteGround</option>
+              <option>Cloudflare</option>
+              <option>Vercel / Netlify</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes <span class="hint">— anything useful for your future self</span></label>
+          <textarea placeholder="Custom plugins, special access needs, client preferences…"></textarea>
+        </div>
+      </div>
+
+      <div class="wizard-page">
+        <div class="form-group">
+          <label>Service plan <span class="req">*</span></label>
+          <div class="plan-picker">
+            <div class="plan-card">
+              <div class="plan-name">Starter</div>
+              <div class="plan-price">$95<span style="font-size: 12px; color: var(--ink-3);">/mo</span></div>
+              <div class="plan-features">Backups, security, monthly check-in</div>
+            </div>
+            <div class="plan-card selected">
+              <div class="plan-name">Pro</div>
+              <div class="plan-price">$240<span style="font-size: 12px; color: var(--ink-3);">/mo</span></div>
+              <div class="plan-features">Everything in Starter + content updates, priority support</div>
+            </div>
+            <div class="plan-card">
+              <div class="plan-name">Pro + Ads</div>
+              <div class="plan-price">$420<span style="font-size: 12px; color: var(--ink-3);">/mo</span></div>
+              <div class="plan-features">Everything in Pro + Google &amp; Meta ad management</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Billing starts</label>
+            <input type="date" />
+          </div>
+          <div class="form-group">
+            <label>Contract length</label>
+            <select>
+              <option>Month-to-month</option>
+              <option>6 months</option>
+              <option>12 months</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="wizard-page">
+        <div class="form-group">
+          <label>Admin URL</label>
+          <input type="text" placeholder="https://acmeflorals.com/wp-admin" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" placeholder="admin" />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" placeholder="••••••••" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Domain registrar login</label>
+          <input type="text" placeholder="GoDaddy, Namecheap, etc." />
+        </div>
+        <div style="font-size: 12px; color: var(--warn); padding: 12px; background: var(--warn-soft); border-radius: 8px; margin-top: 8px;">
+          <i class="ti ti-lock" style="vertical-align: -2px; margin-right: 4px;"></i>
+          Credentials are encrypted and only visible to team members with site access.
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="ghost-btn" data-action="back" onclick="wizardGoTo('newSiteWizard', currentStep('newSiteWizard') - 1)" style="visibility: hidden;">
+        <i class="ti ti-arrow-left"></i> Back
+      </button>
+      <div style="display: flex; gap: 10px;">
+        <button class="ghost-btn" onclick="closeModal('newSiteModal')">Cancel</button>
+        <button class="primary-btn" data-action="next" onclick="wizardGoTo('newSiteWizard', currentStep('newSiteWizard') + 1)">
+          Next <i class="ti ti-arrow-right"></i>
+        </button>
+        <button class="primary-btn" data-action="finish" onclick="closeModal('newSiteModal')" style="display: none;">
+          <i class="ti ti-check"></i> Add site
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NEW CLIENT MODAL ============ -->
+<div class="modal-overlay" id="newClientModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Add a new client</div>
+      <button class="modal-close" onclick="closeModal('newClientModal')" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Business name <span class="req">*</span></label>
+          <input type="text" placeholder="Acme Florals" />
+        </div>
+        <div class="form-group">
+          <label>Industry</label>
+          <select>
+            <option>—</option>
+            <option>Retail / E-commerce</option>
+            <option>Food &amp; Beverage</option>
+            <option>Professional Services</option>
+            <option>Healthcare</option>
+            <option>Real Estate</option>
+            <option>Hospitality</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Primary contact name <span class="req">*</span></label>
+          <input type="text" placeholder="Maria Vasquez" />
+        </div>
+        <div class="form-group">
+          <label>Role / title</label>
+          <input type="text" placeholder="Owner" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" placeholder="maria@acmeflorals.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" placeholder="(602) 555-0142" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Business address</label>
+        <input type="text" placeholder="1234 W Camelback Rd, Phoenix, AZ 85013" />
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea placeholder="How did they find you? What do they care about? Any context worth remembering…"></textarea>
+      </div>
+      <div class="form-group">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" style="width: auto; margin: 0;" checked />
+          <span style="font-weight: 400;">Send welcome email with portal access</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div></div>
+      <div style="display: flex; gap: 10px;">
+        <button class="ghost-btn" onclick="closeModal('newClientModal')">Cancel</button>
+        <button class="primary-btn" onclick="closeModal('newClientModal')"><i class="ti ti-check"></i> Add client</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ NEW LEAD MODAL ============ -->
+<div class="modal-overlay" id="newLeadModal">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title">Add a new lead</div>
+      <button class="modal-close" onclick="closeModal('newLeadModal')" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name <span class="req">*</span></label>
+          <input type="text" placeholder="Maya Chen" />
+        </div>
+        <div class="form-group">
+          <label>Business</label>
+          <input type="text" placeholder="Chen Photography" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="maya@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" placeholder="(602) 555-0199" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Source</label>
+          <select>
+            <option>Referral</option>
+            <option>Website inquiry</option>
+            <option>Cold outreach</option>
+            <option>Networking event</option>
+            <option>Social media</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Estimated value</label>
+          <select>
+            <option>Small ($1k–5k)</option>
+            <option>Medium ($5k–15k)</option>
+            <option>Large ($15k+)</option>
+            <option>Recurring only</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>What do they need?</label>
+        <textarea placeholder="New site, redesign, ads, maintenance contract…"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Stage</label>
+        <select>
+          <option>New lead</option>
+          <option>Discovery call scheduled</option>
+          <option>Proposal sent</option>
+          <option>Negotiation</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <div></div>
+      <div style="display: flex; gap: 10px;">
+        <button class="ghost-btn" onclick="closeModal('newLeadModal')">Cancel</button>
+        <button class="primary-btn" onclick="closeModal('newLeadModal')"><i class="ti ti-check"></i> Add lead</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Wizard helper
+  function currentStep(wizardId) {
+    const steps = document.querySelectorAll(`#${wizardId} .wizard-step`);
+    return Array.from(steps).findIndex(s => s.classList.contains('active'));
+  }
 </script>
 </body>
 </html>
