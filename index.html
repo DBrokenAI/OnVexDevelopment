@@ -4,30 +4,31 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>OnVex Web Development — Dashboard Prototype</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230EA5E9'/%3E%3Cpath d='M7 9 L14 16 L7 23' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Cpath d='M17 9 L24 16 L17 23' stroke='rgba(255,255,255,0.55)' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <style>
   :root {
-    --bg: #FAF8F4;
+    --bg: #F8FAFC;
     --surface: #FFFFFF;
-    --surface-2: #F4F1EB;
-    --ink: #1A1916;
-    --ink-2: #5F5C54;
-    --ink-3: #9A968B;
-    --line: #E8E3D8;
-    --line-2: #D8D2C3;
-    --accent: #C2410C;
-    --accent-soft: #FEF1E6;
-    --info: #1E3A5F;
-    --info-soft: #E8EEF5;
-    --ok: #3B6B3B;
-    --ok-soft: #ECF3EC;
-    --warn: #92580D;
-    --warn-soft: #FBF1DE;
-    --danger: #9B2C2C;
-    --danger-soft: #FBEAEA;
+    --surface-2: #F1F5F9;
+    --ink: #0F172A;
+    --ink-2: #475569;
+    --ink-3: #94A3B8;
+    --line: #E2E8F0;
+    --line-2: #CBD5E1;
+    --accent: #0EA5E9;
+    --accent-soft: #E0F2FE;
+    --info: #1E40AF;
+    --info-soft: #DBEAFE;
+    --ok: #047857;
+    --ok-soft: #D1FAE5;
+    --warn: #B45309;
+    --warn-soft: #FEF3C7;
+    --danger: #B91C1C;
+    --danger-soft: #FEE2E2;
     --font-display: 'Instrument Serif', serif;
     --font-body: 'Inter Tight', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
@@ -106,14 +107,13 @@
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .brand-mark {
-    width: 28px; height: 28px;
+    width: 32px; height: 32px;
     background: var(--accent);
-    border-radius: 6px;
+    border-radius: 7px;
     display: flex; align-items: center; justify-content: center;
-    color: #fff;
-    font-family: var(--font-display);
-    font-size: 18px;
+    flex-shrink: 0;
   }
+  .brand-mark svg { display: block; }
   .brand-name {
     font-family: var(--font-display);
     font-size: 18px;
@@ -822,7 +822,7 @@
     border-bottom: 1px solid var(--line);
   }
   .cust-brand { display: flex; align-items: center; gap: 12px; }
-  .cust-brand .brand-mark { width: 36px; height: 36px; font-size: 22px; }
+  .cust-brand .brand-mark { width: 40px; height: 40px; border-radius: 9px; }
   .cust-brand-name { font-family: var(--font-display); font-size: 24px; color: var(--ink); }
   .cust-user { text-align: right; display: flex; align-items: center; gap: 12px; }
   .cust-user-info { text-align: right; }
@@ -1356,7 +1356,12 @@
 
       <aside class="sidebar">
         <div class="brand">
-          <div class="brand-mark">O</div>
+          <div class="brand-mark">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="OnVex logo">
+              <path d="M5 6 L11 12 L5 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M13 6 L19 12 L13 18" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </div>
           <div>
             <div class="brand-name">OnVex</div>
             <div class="brand-sub">Web Dev</div>
@@ -1693,7 +1698,7 @@
           <div class="client-grid">
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #C2410C;">AF</div>
+                <div class="client-avatar" style="background: #0EA5E9;">AF</div>
                 <div>
                   <div class="client-name">Acme Florals</div>
                   <div class="client-contact">Maria Vasquez</div>
@@ -1707,7 +1712,7 @@
             </div>
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #1E3A5F;">RD</div>
+                <div class="client-avatar" style="background: #1E40AF;">RD</div>
                 <div>
                   <div class="client-name">Red Rock Dental</div>
                   <div class="client-contact">Dr. Patricia Lee</div>
@@ -1721,7 +1726,7 @@
             </div>
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #3B6B3B;">SL</div>
+                <div class="client-avatar" style="background: #047857;">SL</div>
                 <div>
                   <div class="client-name">Sonoran Legal</div>
                   <div class="client-contact">James Holt</div>
@@ -1735,7 +1740,7 @@
             </div>
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #92580D;">PL</div>
+                <div class="client-avatar" style="background: #B45309;">PL</div>
                 <div>
                   <div class="client-name">Papago Landscaping</div>
                   <div class="client-contact">Carlos Mendez</div>
@@ -1749,7 +1754,7 @@
             </div>
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #9B2C2C;">TT</div>
+                <div class="client-avatar" style="background: #B91C1C;">TT</div>
                 <div>
                   <div class="client-name">Tucson Tacos</div>
                   <div class="client-contact">Sofia Romero</div>
@@ -1763,7 +1768,7 @@
             </div>
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #C2410C;">AC</div>
+                <div class="client-avatar" style="background: #0EA5E9;">AC</div>
                 <div>
                   <div class="client-name">Apache Creek Café</div>
                   <div class="client-contact">Daniel Foster</div>
@@ -1777,7 +1782,7 @@
             </div>
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #1E3A5F;">MM</div>
+                <div class="client-avatar" style="background: #1E40AF;">MM</div>
                 <div>
                   <div class="client-name">Mojave Market</div>
                   <div class="client-contact">Ana Reyes</div>
@@ -1791,7 +1796,7 @@
             </div>
             <div class="client-card">
               <div class="client-card-head">
-                <div class="client-avatar" style="background: #3B6B3B;">GG</div>
+                <div class="client-avatar" style="background: #047857;">GG</div>
                 <div>
                   <div class="client-name">Gila River Gallery</div>
                   <div class="client-contact">Robert Kim</div>
@@ -1819,7 +1824,7 @@
           <div class="inbox-grid">
             <div class="inbox-list">
               <div class="inbox-item active unread">
-                <div class="client-avatar" style="background: #C2410C; width: 36px; height: 36px; font-size: 14px;">MV</div>
+                <div class="client-avatar" style="background: #0EA5E9; width: 36px; height: 36px; font-size: 14px;">MV</div>
                 <div class="inbox-content">
                   <div class="inbox-top">
                     <div class="inbox-name">Maria Vasquez</div>
@@ -1830,7 +1835,7 @@
                 <div class="inbox-dot"></div>
               </div>
               <div class="inbox-item unread">
-                <div class="client-avatar" style="background: #3B6B3B; width: 36px; height: 36px; font-size: 14px;">JH</div>
+                <div class="client-avatar" style="background: #047857; width: 36px; height: 36px; font-size: 14px;">JH</div>
                 <div class="inbox-content">
                   <div class="inbox-top">
                     <div class="inbox-name">James Holt</div>
@@ -1841,7 +1846,7 @@
                 <div class="inbox-dot"></div>
               </div>
               <div class="inbox-item unread">
-                <div class="client-avatar" style="background: #92580D; width: 36px; height: 36px; font-size: 14px;">CM</div>
+                <div class="client-avatar" style="background: #B45309; width: 36px; height: 36px; font-size: 14px;">CM</div>
                 <div class="inbox-content">
                   <div class="inbox-top">
                     <div class="inbox-name">Carlos Mendez</div>
@@ -1852,7 +1857,7 @@
                 <div class="inbox-dot"></div>
               </div>
               <div class="inbox-item unread">
-                <div class="client-avatar" style="background: #C2410C; width: 36px; height: 36px; font-size: 14px;">DF</div>
+                <div class="client-avatar" style="background: #0EA5E9; width: 36px; height: 36px; font-size: 14px;">DF</div>
                 <div class="inbox-content">
                   <div class="inbox-top">
                     <div class="inbox-name">Daniel Foster</div>
@@ -1863,7 +1868,7 @@
                 <div class="inbox-dot"></div>
               </div>
               <div class="inbox-item">
-                <div class="client-avatar" style="background: #1E3A5F;  width: 36px; height: 36px; font-size: 14px;">PL</div>
+                <div class="client-avatar" style="background: #1E40AF;  width: 36px; height: 36px; font-size: 14px;">PL</div>
                 <div class="inbox-content">
                   <div class="inbox-top">
                     <div class="inbox-name">Patricia Lee</div>
@@ -1873,7 +1878,7 @@
                 </div>
               </div>
               <div class="inbox-item">
-                <div class="client-avatar" style="background: #1E3A5F; width: 36px; height: 36px; font-size: 14px;">AR</div>
+                <div class="client-avatar" style="background: #1E40AF; width: 36px; height: 36px; font-size: 14px;">AR</div>
                 <div class="inbox-content">
                   <div class="inbox-top">
                     <div class="inbox-name">Ana Reyes</div>
@@ -1883,7 +1888,7 @@
                 </div>
               </div>
               <div class="inbox-item">
-                <div class="client-avatar" style="background: #9B2C2C; width: 36px; height: 36px; font-size: 14px;">SR</div>
+                <div class="client-avatar" style="background: #B91C1C; width: 36px; height: 36px; font-size: 14px;">SR</div>
                 <div class="inbox-content">
                   <div class="inbox-top">
                     <div class="inbox-name">Sofia Romero</div>
@@ -2476,7 +2481,7 @@
                 </div>
                 <div class="toggle-row">
                   <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 32px; height: 32px; background: #1E3A5F; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 11px;">B</div>
+                    <div style="width: 32px; height: 32px; background: #1E40AF; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 600; font-size: 11px;">B</div>
                     <div>
                       <div class="toggle-label">BetterStack</div>
                       <div class="toggle-desc">Site monitoring</div>
@@ -2520,7 +2525,12 @@
       <div class="cust-head">
         <div>
           <div class="cust-brand">
-            <div class="brand-mark">O</div>
+            <div class="brand-mark">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="OnVex logo">
+                <path d="M5 6 L11 12 L5 18" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M13 6 L19 12 L13 18" stroke="rgba(255,255,255,0.55)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              </svg>
+            </div>
             <div class="cust-brand-name">OnVex Web Development</div>
           </div>
         </div>
