@@ -235,7 +235,16 @@
   }
 
   /* Main */
-  .main { padding: 32px 40px 64px; overflow-x: hidden; }
+  .main {
+    padding: 32px 40px 64px;
+    overflow-x: hidden;
+  }
+  .main > * {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+  }
   .topbar {
     display: flex;
     align-items: center;
