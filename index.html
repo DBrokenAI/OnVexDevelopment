@@ -1068,17 +1068,272 @@
   }
   .empty i { font-size: 32px; margin-bottom: 12px; display: block; }
 
+  /* Mobile menu button (hidden on desktop) */
+  .mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 99;
+    width: 40px; height: 40px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .mobile-menu-btn i { font-size: 20px; }
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 98;
+  }
+  .sidebar-overlay.open { display: block; }
+
+  /* ============ TABLET (max-width: 900px) ============ */
   @media (max-width: 900px) {
     .admin { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .main { padding: 80px 20px 40px; }
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 240px;
+      z-index: 99;
+      transition: left 0.25s ease;
+    }
+    .sidebar.open { left: 0; }
+    .mobile-menu-btn { display: flex; }
+    .main { padding: 70px 20px 40px; }
     .metrics, .grid, .grid-2, .cust-grid, .site-stats, .billing-summary, .camp-stats { grid-template-columns: 1fr; }
-    .customer { padding: 80px 20px 40px; }
+    .customer { padding: 70px 20px 40px; }
     .cust-greeting, .page-header h1 { font-size: 32px; }
     .cust-head { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .cust-user { align-self: flex-start; }
     .search { width: 100%; }
-    .inbox-grid { grid-template-columns: 1fr; height: auto; }
+    .inbox-grid { grid-template-columns: 1fr; height: auto; gap: 12px; }
+    .inbox-list { max-height: 320px; }
     .settings-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ============ PHONE (max-width: 600px) ============ */
+  @media (max-width: 600px) {
+    /* Switcher smaller and lower (out of mobile-menu-btn way) */
+    .switcher {
+      top: auto;
+      bottom: 16px;
+      padding: 3px;
+    }
+    .switcher button {
+      font-size: 11px;
+      padding: 7px 14px;
+    }
+
+    /* Main padding tighter */
+    .main, .customer { padding: 70px 16px 80px; }
+
+    /* Topbar stacks */
+    .topbar { gap: 12px; margin-bottom: 20px; }
+    .top-actions { width: 100%; }
+    .top-actions .primary-btn,
+    .top-actions .ghost-btn,
+    .top-actions .icon-btn { flex-shrink: 0; }
+    .search {
+      width: 100%;
+      font-size: 12px;
+    }
+    .search span { display: none; }
+    .search span:first-of-type { display: inline; }
+    .search .kbd { display: none; }
+
+    /* Page titles smaller */
+    .page-title, .cust-greeting, .page-header h1 { font-size: 28px; line-height: 1.15; }
+    .page-sub { font-size: 12px; }
+
+    /* Metric strip — 2 column instead of 4 */
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+    .metric { padding: 14px 16px; }
+    .metric-value { font-size: 26px; }
+    .metric-label { font-size: 10px; }
+
+    /* Site rows — collapse the dense grid */
+    .site-row {
+      grid-template-columns: 32px 1fr auto;
+      gap: 10px;
+      padding: 12px 14px;
+    }
+    .site-row > .pill,
+    .site-row > .site-bill,
+    .site-row > .site-msg { display: none; }
+    .site-row > i.ti-chevron-right { font-size: 14px; color: var(--ink-3); }
+    .site-name { font-size: 13px; }
+    .site-meta { font-size: 11px; }
+
+    /* Panel padding tighter */
+    .panel-head { padding: 14px 16px; }
+    .panel-title { font-size: 17px; }
+    .activity-item { padding: 12px 16px; gap: 10px; }
+    .invoice-row { padding: 10px 16px; }
+    .task-row { padding: 10px 16px; }
+
+    /* Tables (billing) — convert to stacked cards */
+    .table { overflow: hidden; }
+    .table-head { display: none; }
+    .table-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 12px;
+      padding: 14px 16px;
+      align-items: start;
+    }
+    .table-row > div:nth-child(1) {
+      grid-column: 1;
+      grid-row: 1;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-3);
+    }
+    .table-row > div:nth-child(2) {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .table-row > div:nth-child(3) {
+      grid-column: 1;
+      grid-row: 3;
+      font-size: 12px;
+      color: var(--ink-2);
+    }
+    .table-row > div:nth-child(4) {
+      grid-column: 2;
+      grid-row: 2;
+      text-align: right;
+      font-weight: 500;
+    }
+    .table-row > div:nth-child(5) {
+      grid-column: 2;
+      grid-row: 3;
+      justify-self: end;
+    }
+    .table-row > div:nth-child(6) {
+      grid-column: 2;
+      grid-row: 1;
+      justify-self: end;
+    }
+
+    /* Billing summary cards */
+    .bill-card { padding: 16px 18px; }
+    .bill-value { font-size: 26px; }
+
+    /* Customer hero card */
+    .site-card { padding: 24px 20px; border-radius: 12px; }
+    .site-card::before { width: 160px; height: 160px; }
+    .site-url { font-size: 22px; }
+    .site-status { flex-wrap: wrap; gap: 8px; font-size: 12px; }
+    .site-card .ghost-btn { width: 100%; justify-content: center; }
+    .site-stats { gap: 16px; margin-top: 20px; padding-top: 20px; }
+    .site-stat-value { font-size: 22px; }
+
+    /* Customer tabs — horizontal scroll */
+    .cust-tabs {
+      margin-bottom: 20px;
+      gap: 0;
+      -webkit-overflow-scrolling: touch;
+    }
+    .cust-tab {
+      padding: 10px 14px;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .cust-tab i { font-size: 14px; }
+
+    /* Messaging */
+    .msg-head { padding: 14px 16px; }
+    .msg-head-title { font-size: 18px; }
+    .msg-bubble-list { padding: 14px 16px; gap: 12px; max-height: 280px; }
+    .bubble { max-width: 88%; font-size: 13px; }
+    .msg-input { padding: 10px 14px; }
+    .msg-input input { font-size: 14px; padding: 9px 14px; }
+
+    /* Inbox */
+    .inbox-item { padding: 12px 14px; gap: 10px; }
+    .inbox-name { font-size: 13px; }
+    .inbox-preview { font-size: 12px; }
+    .thread-head { padding: 14px 16px; }
+    .thread-name { font-size: 18px; }
+    .thread-body { padding: 14px 16px; gap: 12px; }
+
+    /* Info cards */
+    .info-card { padding: 16px 18px; border-radius: 12px; }
+    .info-title { font-size: 16px; }
+    .next-bill-amt { font-size: 32px; }
+    .updates { padding: 18px 20px; border-radius: 12px; }
+    .update-date { width: 50px; font-size: 10px; }
+    .update-title { font-size: 13px; }
+    .update-desc { font-size: 12px; }
+
+    /* Quick actions */
+    .quick-btn { padding: 12px; }
+    .quick-btn-label { font-size: 12px; }
+    .quick-btn-sub { font-size: 10px; }
+
+    /* Client cards */
+    .client-grid { grid-template-columns: 1fr; }
+    .client-card { padding: 16px 18px; }
+
+    /* Campaign cards */
+    .campaign-card { padding: 16px 18px; }
+    .camp-head { flex-wrap: wrap; gap: 8px; }
+    .camp-name { font-size: 17px; }
+    .camp-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .camp-stat-value { font-size: 18px; }
+
+    /* Settings */
+    .settings-nav {
+      flex-direction: row;
+      overflow-x: auto;
+      gap: 4px;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--line);
+    }
+    .settings-nav-item {
+      flex-shrink: 0;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+    .settings-section { padding: 18px 20px; }
+    .settings-section h3 { font-size: 18px; }
+
+    /* Notifications */
+    .notif-item { padding: 14px 16px; gap: 12px; flex-wrap: wrap; }
+    .notif-item .ghost-btn { width: 100%; justify-content: center; margin-top: 8px; }
+
+    /* Reports */
+    .chart-card { padding: 20px 18px; }
+    .chart-title { font-size: 17px; }
+    .bar-chart { gap: 6px; height: 180px; }
+    .bar-label { font-size: 9px; }
+    .bar-value { font-size: 9px; }
+
+    /* Customer head */
+    .cust-brand-name { font-size: 20px; }
+    .cust-sub { font-size: 13px; }
+
+    /* Foot */
+    .foot { flex-direction: column; gap: 12px; align-items: flex-start; text-align: left; }
+  }
+
+  /* ============ SMALL PHONE (max-width: 380px) ============ */
+  @media (max-width: 380px) {
+    .metrics { grid-template-columns: 1fr; }
+    .camp-stats { grid-template-columns: 1fr; }
+    .page-title, .cust-greeting, .page-header h1 { font-size: 24px; }
   }
 </style>
 </head>
@@ -1088,6 +1343,12 @@
     <button class="active" data-view="admin"><i class="ti ti-shield-lock"></i> Admin</button>
     <button data-view="customer"><i class="ti ti-user"></i> Customer</button>
   </div>
+
+  <!-- Mobile menu button (only shows in admin view on mobile) -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+    <i class="ti ti-menu-2"></i>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <!-- ============ ADMIN VIEW ============ -->
   <div class="view active" id="view-admin">
@@ -2678,6 +2939,22 @@
   </div>
 
 <script>
+  // Mobile menu toggle
+  const sidebar = document.querySelector('#view-admin .sidebar');
+  const menuBtn = document.getElementById('mobileMenuBtn');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+  }
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  }
+  menuBtn.addEventListener('click', openSidebar);
+  overlay.addEventListener('click', closeSidebar);
+
   // View switcher
   document.querySelectorAll('.switcher button').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -2686,6 +2963,9 @@
       btn.classList.add('active');
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       document.getElementById('view-' + view).classList.add('active');
+      // Hide mobile menu button when not in admin view
+      menuBtn.style.display = (view === 'admin') ? '' : 'none';
+      closeSidebar();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
@@ -2697,7 +2977,7 @@
     if (navItem) navItem.classList.add('active');
     document.querySelectorAll('#view-admin .page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-' + page).classList.add('active');
-    document.querySelector('#view-admin .main').scrollTo({ top: 0, behavior: 'smooth' });
+    closeSidebar();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
   document.querySelectorAll('#view-admin .nav-item').forEach(item => {
