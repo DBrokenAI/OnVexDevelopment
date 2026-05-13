@@ -1128,7 +1128,296 @@
   }
   .empty i { font-size: 32px; margin-bottom: 12px; display: block; }
 
-  /* ============ COMMAND PALETTE / SEARCH ============ */
+  /* ============ FIELD MODE (iPad) ============ */
+  .field-hero {
+    text-align: center;
+    padding: 24px 0 32px;
+  }
+  .field-hero-title {
+    font-family: var(--font-display);
+    font-size: 42px;
+    line-height: 1.05;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .field-hero-sub {
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+
+  .field-actions {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .field-action-card {
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: 18px;
+    padding: 32px 24px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 180px;
+  }
+  .field-action-card:active {
+    transform: scale(0.97);
+    border-color: var(--accent);
+  }
+  .field-action-card.lead { background: linear-gradient(135deg, var(--accent) 0%, var(--info) 100%); border: none; color: #fff; }
+  .field-action-card.note { background: var(--ink); border: none; color: #fff; }
+  .field-action-card.voice { background: linear-gradient(135deg, #B91C1C 0%, #B45309 100%); border: none; color: #fff; }
+  .field-action-icon {
+    width: 64px; height: 64px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .field-action-icon i { font-size: 32px; color: #fff; }
+  .field-action-label {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 1.1;
+  }
+  .field-action-sub {
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  /* Field forms — large touch targets */
+  .field-form {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .field-form.active { display: block; }
+  .field-form-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .field-form-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+  }
+  .field-form-back {
+    background: var(--surface-2);
+    color: var(--ink-2);
+    border: none;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .field-group { margin-bottom: 20px; }
+  .field-group label {
+    display: block;
+    font-size: 14px;
+    color: var(--ink-2);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  .field-input {
+    width: 100%;
+    padding: 16px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 18px;
+    color: var(--ink);
+    background: var(--surface);
+    outline: none;
+    -webkit-appearance: none;
+    transition: border-color 0.15s;
+  }
+  .field-input:focus { border-color: var(--accent); }
+  textarea.field-input {
+    min-height: 140px;
+    resize: none;
+    line-height: 1.5;
+  }
+
+  /* Tag picker — big touchable client chips */
+  .tag-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag-chip {
+    padding: 12px 18px;
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    background: var(--surface);
+    font-size: 15px;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tag-chip:active { transform: scale(0.96); }
+  .tag-chip.selected {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* Two-up form row for iPad landscape */
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* Big save/cancel buttons */
+  .field-foot {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .field-btn {
+    flex: 1;
+    padding: 18px;
+    border-radius: 14px;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .field-btn:active { transform: scale(0.98); }
+  .field-btn.primary { background: var(--ink); color: #fff; }
+  .field-btn.secondary { background: var(--surface-2); color: var(--ink); }
+  .field-btn.success { background: var(--ok); color: #fff; }
+
+  /* Voice recorder */
+  .voice-recorder {
+    text-align: center;
+    padding: 32px 0;
+  }
+  .voice-orb {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--danger) 0%, var(--warn) 100%);
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s;
+    box-shadow: 0 8px 32px rgba(185, 28, 28, 0.3);
+  }
+  .voice-orb:active { transform: scale(0.95); }
+  .voice-orb i { font-size: 56px; color: #fff; }
+  .voice-orb.recording {
+    animation: voicePulse 1.5s ease-in-out infinite;
+  }
+  .voice-orb.recording::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 3px solid var(--danger);
+    opacity: 0.4;
+    animation: voiceRing 1.5s ease-out infinite;
+  }
+  @keyframes voicePulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(185, 28, 28, 0.3); }
+    50% { transform: scale(1.04); box-shadow: 0 12px 48px rgba(185, 28, 28, 0.5); }
+  }
+  @keyframes voiceRing {
+    0% { transform: scale(1); opacity: 0.4; }
+    100% { transform: scale(1.3); opacity: 0; }
+  }
+  .voice-status {
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .voice-timer {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--ink-2);
+  }
+  .voice-transcript {
+    background: var(--surface-2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 24px;
+    text-align: left;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    min-height: 100px;
+  }
+  .voice-transcript.empty {
+    color: var(--ink-3);
+    font-style: italic;
+  }
+
+  /* Success toast */
+  .field-toast {
+    display: none;
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ok);
+    color: #fff;
+    padding: 14px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    z-index: 300;
+    font-weight: 500;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: toastIn 0.25s ease;
+  }
+  .field-toast.show { display: flex; }
+  @keyframes toastIn {
+    from { opacity: 0; transform: translate(-50%, -10px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+  }
+
+  /* Stack to single column on phone */
+  @media (max-width: 700px) {
+    .field-actions { grid-template-columns: 1fr; }
+    .field-row { grid-template-columns: 1fr; }
+    .field-hero-title { font-size: 32px; }
+    .field-action-card { padding: 24px; min-height: 140px; }
+    .field-action-label { font-size: 22px; }
+    .voice-orb { width: 130px; height: 130px; }
+    .voice-orb i { font-size: 46px; }
+  }
+
+
   .cmdk-overlay {
     display: none;
     position: fixed;
@@ -2399,6 +2688,12 @@
 </head>
 <body>
 
+  <!-- Field Mode success toast -->
+  <div class="field-toast" id="fieldToast">
+    <i class="ti ti-circle-check" style="font-size: 20px;"></i>
+    <span id="fieldToastMsg">Saved</span>
+  </div>
+
   <div class="switcher">
     <button class="active" data-view="admin"><i class="ti ti-shield-lock"></i> Admin</button>
     <button data-view="customer"><i class="ti ti-user"></i> Customer</button>
@@ -2575,12 +2870,14 @@
         </div>
 
         <div class="nav-section">
+        <div class="nav-section">
           <div class="nav-label">Workspace</div>
           <div class="nav-item active" data-page="overview"><i class="ti ti-layout-dashboard"></i> Overview</div>
           <div class="nav-item" data-page="sites"><i class="ti ti-world"></i> Sites <span class="badge">14</span></div>
           <div class="nav-item" data-page="clients"><i class="ti ti-users"></i> Clients</div>
           <div class="nav-item" data-page="leads"><i class="ti ti-target"></i> Leads <span class="badge" style="background: var(--warn);">5</span></div>
           <div class="nav-item" data-page="messages"><i class="ti ti-message-circle"></i> Messages <span class="badge">7</span></div>
+          <div class="nav-item" data-page="field"><i class="ti ti-device-tablet"></i> Field Mode</div>
         </div>
 
         <div class="nav-section">
@@ -3324,6 +3621,158 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIELD MODE PAGE (iPad-optimized quick entry) -->
+        <div class="page" id="page-field">
+          <div class="field-hero">
+            <div class="field-hero-title">Field Mode</div>
+            <div class="field-hero-sub">Quick capture for when you're in the field · Tap to start</div>
+          </div>
+
+          <!-- Action picker (shown by default) -->
+          <div class="field-actions" id="fieldActions">
+            <div class="field-action-card lead" data-field-form="lead">
+              <div class="field-action-icon"><i class="ti ti-target"></i></div>
+              <div class="field-action-label">Add Lead</div>
+              <div class="field-action-sub">During a meeting or call</div>
+            </div>
+            <div class="field-action-card note" data-field-form="note">
+              <div class="field-action-icon"><i class="ti ti-notebook"></i></div>
+              <div class="field-action-label">Client Note</div>
+              <div class="field-action-sub">Capture before you forget</div>
+            </div>
+            <div class="field-action-card voice" data-field-form="voice">
+              <div class="field-action-icon"><i class="ti ti-microphone"></i></div>
+              <div class="field-action-label">Voice Memo</div>
+              <div class="field-action-sub">Dictate hands-free</div>
+            </div>
+          </div>
+
+          <!-- ADD LEAD FORM -->
+          <div class="field-form" id="field-form-lead">
+            <div class="field-form-head">
+              <div class="field-form-title">Add a lead</div>
+              <button class="field-form-back" onclick="closeFieldForm()" aria-label="Back"><i class="ti ti-arrow-left"></i></button>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label>Name</label>
+                <input type="text" class="field-input" id="fLeadName" placeholder="Their name" />
+              </div>
+              <div class="field-group">
+                <label>Business</label>
+                <input type="text" class="field-input" id="fLeadBiz" placeholder="Their business" />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label>Phone</label>
+                <input type="tel" class="field-input" inputmode="tel" placeholder="(602) 555-0142" />
+              </div>
+              <div class="field-group">
+                <label>Email</label>
+                <input type="email" class="field-input" inputmode="email" placeholder="them@example.com" />
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>How did you meet?</label>
+              <div class="tag-picker">
+                <div class="tag-chip">Referral</div>
+                <div class="tag-chip">Networking event</div>
+                <div class="tag-chip">Cold outreach</div>
+                <div class="tag-chip">Social media</div>
+                <div class="tag-chip">Website inquiry</div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>What do they need? <span style="color: var(--ink-3); font-weight: 400; margin-left: 4px;">— hold mic on keyboard to dictate</span></label>
+              <textarea class="field-input" placeholder="New website, redesign, ads, maintenance…"></textarea>
+            </div>
+
+            <div class="field-foot">
+              <button class="field-btn secondary" onclick="closeFieldForm()">Cancel</button>
+              <button class="field-btn primary" onclick="saveFieldForm('Lead saved to pipeline')"><i class="ti ti-check"></i> Save lead</button>
+            </div>
+          </div>
+
+          <!-- CLIENT NOTE FORM -->
+          <div class="field-form" id="field-form-note">
+            <div class="field-form-head">
+              <div class="field-form-title">Quick note</div>
+              <button class="field-form-back" onclick="closeFieldForm()" aria-label="Back"><i class="ti ti-arrow-left"></i></button>
+            </div>
+
+            <div class="field-group">
+              <label>About which client?</label>
+              <div class="tag-picker">
+                <div class="tag-chip">Acme Florals</div>
+                <div class="tag-chip">Red Rock Dental</div>
+                <div class="tag-chip">Sonoran Legal</div>
+                <div class="tag-chip">Mojave Market</div>
+                <div class="tag-chip">Cactus Cantina</div>
+                <div class="tag-chip">+ Other</div>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label>Note <span style="color: var(--ink-3); font-weight: 400; margin-left: 4px;">— hold mic on keyboard to dictate</span></label>
+              <textarea class="field-input" style="min-height: 200px;" placeholder="What did you learn? What did they ask for? What should you remember next time?"></textarea>
+            </div>
+
+            <div class="field-foot">
+              <button class="field-btn secondary" onclick="closeFieldForm()">Cancel</button>
+              <button class="field-btn primary" onclick="saveFieldForm('Note saved to client')"><i class="ti ti-check"></i> Save note</button>
+            </div>
+          </div>
+
+          <!-- VOICE MEMO FORM -->
+          <div class="field-form" id="field-form-voice">
+            <div class="field-form-head">
+              <div class="field-form-title">Voice memo</div>
+              <button class="field-form-back" onclick="closeFieldForm()" aria-label="Back"><i class="ti ti-arrow-left"></i></button>
+            </div>
+
+            <div class="voice-recorder">
+              <div class="voice-orb" id="voiceOrb">
+                <i class="ti ti-microphone"></i>
+              </div>
+              <div class="voice-status" id="voiceStatus">Tap to start recording</div>
+              <div class="voice-timer" id="voiceTimer">00:00</div>
+              <div class="voice-transcript empty" id="voiceTranscript">Your transcription will appear here as you speak. Uses your browser's built-in speech recognition — no audio leaves your device until you save.</div>
+            </div>
+
+            <div class="field-group" style="margin-top: 20px;">
+              <label>Attach to (optional)</label>
+              <div class="tag-picker">
+                <div class="tag-chip">Acme Florals</div>
+                <div class="tag-chip">Red Rock Dental</div>
+                <div class="tag-chip">Sonoran Legal</div>
+                <div class="tag-chip">A lead</div>
+                <div class="tag-chip">Just for me</div>
+              </div>
+            </div>
+
+            <div class="field-foot">
+              <button class="field-btn secondary" onclick="closeFieldForm()">Cancel</button>
+              <button class="field-btn primary" onclick="saveFieldForm('Voice memo saved')"><i class="ti ti-check"></i> Save memo</button>
+            </div>
+          </div>
+
+          <!-- iPad tips -->
+          <div style="margin-top: 24px; padding: 20px; background: var(--info-soft); border-radius: 12px; display: flex; gap: 14px;">
+            <i class="ti ti-info-circle" style="font-size: 22px; color: var(--info); flex-shrink: 0;"></i>
+            <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;">
+              <strong style="color: var(--info);">iPad pro-tips:</strong>
+              Use the <strong>microphone button on your keyboard</strong> for hands-free dictation into any text field.
+              <strong>Apple Pencil works for sketching notes</strong> right into the textarea (handwriting auto-converts to text on iPadOS 14+).
+              <strong>Add this to your Home Screen</strong> via the Share menu for fullscreen, one-tap access.
             </div>
           </div>
         </div>
@@ -5847,6 +6296,149 @@
   });
 
   // =========================================================
+  // FIELD MODE (iPad)
+  // =========================================================
+  function openFieldForm(name) {
+    document.getElementById('fieldActions').style.display = 'none';
+    document.querySelectorAll('.field-form').forEach(f => f.classList.remove('active'));
+    const form = document.getElementById('field-form-' + name);
+    if (form) form.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function closeFieldForm() {
+    document.querySelectorAll('.field-form').forEach(f => f.classList.remove('active'));
+    document.getElementById('fieldActions').style.display = '';
+    // If we were recording, stop
+    if (voiceRecognition && voiceIsRecording) stopVoiceRecording();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showFieldToast(msg) {
+    const toast = document.getElementById('fieldToast');
+    document.getElementById('fieldToastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function saveFieldForm(message) {
+    // Reset fields in the form
+    document.querySelectorAll('.field-form.active input, .field-form.active textarea').forEach(el => el.value = '');
+    document.querySelectorAll('.field-form.active .tag-chip.selected').forEach(c => c.classList.remove('selected'));
+    closeFieldForm();
+    showFieldToast(message);
+  }
+
+  document.querySelectorAll('.field-action-card').forEach(card => {
+    card.addEventListener('click', () => openFieldForm(card.dataset.fieldForm));
+  });
+
+  // Tag chip toggle (single-select per group)
+  document.querySelectorAll('.tag-picker').forEach(picker => {
+    picker.querySelectorAll('.tag-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        picker.querySelectorAll('.tag-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+      });
+    });
+  });
+
+  // =========================================================
+  // VOICE RECORDING — uses Web Speech API
+  // =========================================================
+  let voiceRecognition = null;
+  let voiceIsRecording = false;
+  let voiceStartTime = 0;
+  let voiceTimerInterval = null;
+  let voiceTranscript = '';
+
+  function initVoiceRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return null;
+    const rec = new SpeechRecognition();
+    rec.continuous = true;
+    rec.interimResults = true;
+    rec.lang = 'en-US';
+
+    rec.onresult = (e) => {
+      let interim = '';
+      let finalText = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const txt = e.results[i][0].transcript;
+        if (e.results[i].isFinal) finalText += txt + ' ';
+        else interim += txt;
+      }
+      if (finalText) voiceTranscript += finalText;
+      const display = document.getElementById('voiceTranscript');
+      const combined = (voiceTranscript + interim).trim();
+      if (combined) {
+        display.textContent = combined;
+        display.classList.remove('empty');
+      }
+    };
+
+    rec.onerror = (e) => {
+      console.warn('Speech recognition error:', e.error);
+      if (e.error === 'not-allowed') {
+        document.getElementById('voiceStatus').textContent = 'Microphone access denied';
+      }
+      stopVoiceRecording();
+    };
+
+    rec.onend = () => {
+      // Auto-restart if user is still recording (some browsers stop after silence)
+      if (voiceIsRecording) {
+        try { rec.start(); } catch (err) {}
+      }
+    };
+
+    return rec;
+  }
+
+  function startVoiceRecording() {
+    if (!voiceRecognition) voiceRecognition = initVoiceRecognition();
+    if (!voiceRecognition) {
+      document.getElementById('voiceStatus').textContent = 'Speech recognition not supported on this device';
+      document.getElementById('voiceTranscript').textContent = 'Your browser doesn\'t support speech recognition. Try Safari or Chrome on iPad, or type your memo instead.';
+      return;
+    }
+    voiceTranscript = '';
+    voiceIsRecording = true;
+    voiceStartTime = Date.now();
+    document.getElementById('voiceOrb').classList.add('recording');
+    document.getElementById('voiceOrb').innerHTML = '<i class="ti ti-player-stop-filled"></i>';
+    document.getElementById('voiceStatus').textContent = 'Recording… tap to stop';
+    document.getElementById('voiceTranscript').textContent = 'Listening…';
+    document.getElementById('voiceTranscript').classList.remove('empty');
+    voiceTimerInterval = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - voiceStartTime) / 1000);
+      const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const s = String(elapsed % 60).padStart(2, '0');
+      document.getElementById('voiceTimer').textContent = `${m}:${s}`;
+    }, 500);
+    try { voiceRecognition.start(); } catch (err) {}
+  }
+
+  function stopVoiceRecording() {
+    voiceIsRecording = false;
+    if (voiceRecognition) {
+      try { voiceRecognition.stop(); } catch (err) {}
+    }
+    clearInterval(voiceTimerInterval);
+    document.getElementById('voiceOrb').classList.remove('recording');
+    document.getElementById('voiceOrb').innerHTML = '<i class="ti ti-microphone"></i>';
+    document.getElementById('voiceStatus').textContent = voiceTranscript.trim() ? 'Recording stopped' : 'Tap to start recording';
+  }
+
+  const voiceOrb = document.getElementById('voiceOrb');
+  if (voiceOrb) {
+    voiceOrb.addEventListener('click', () => {
+      if (voiceIsRecording) stopVoiceRecording();
+      else startVoiceRecording();
+    });
+  }
+
+  // =========================================================
   // COMMAND PALETTE (⌘K / Ctrl+K)
   // =========================================================
   const cmdkData = [
@@ -5854,6 +6446,7 @@
     { type: 'page', label: 'Sites', icon: 'ti-world', action: () => goToPage('sites'), section: 'Pages' },
     { type: 'page', label: 'Clients', icon: 'ti-users', action: () => goToPage('clients'), section: 'Pages' },
     { type: 'page', label: 'Leads pipeline', icon: 'ti-target', action: () => goToPage('leads'), section: 'Pages' },
+    { type: 'page', label: 'Field Mode (iPad)', icon: 'ti-device-tablet', action: () => goToPage('field'), section: 'Pages' },
     { type: 'page', label: 'Messages', icon: 'ti-message-circle', action: () => goToPage('messages'), section: 'Pages' },
     { type: 'page', label: 'Billing', icon: 'ti-receipt', action: () => goToPage('billing'), section: 'Pages' },
     { type: 'page', label: 'Reports', icon: 'ti-chart-line', action: () => goToPage('reports'), section: 'Pages' },
