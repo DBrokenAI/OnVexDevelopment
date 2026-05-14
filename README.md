@@ -1,49 +1,71 @@
-# OnVex Web Development — Dashboard Prototype
+# OnVex Web Development
 
-Internal ops dashboard and client portal prototype for OnVex Web Development.
+Internal ops dashboard and client portal for OnVex Web Development.
 
-## What this is
+This repo contains:
 
-A clickable HTML prototype of the OnVex management dashboard, showing both:
+- **`/` (Next.js app)** — the production application: admin dashboard at `/admin/*` and customer portal at `/portal/*`.
+- **`/prototype/index.html`** — the original single-file HTML prototype, kept for design reference.
+- **`/supabase/migrations/*.sql`** — database schema and Row Level Security policies.
 
-- **Admin view** — internal dashboard for managing sites, clients, billing, messages, campaigns, tasks, notifications, and settings
-- **Customer view** — client-facing portal where clients see their site status, message us, view invoices, and submit requests
+## Stack
 
-Use the pill switcher at the top of the page to flip between the two views.
+- **Next.js 16** (App Router, TypeScript, Tailwind v4)
+- **Supabase** — Postgres + Auth + RLS
+- **Stripe** — billing and subscriptions
+- **Resend** — transactional email
+- **Vercel** — hosting
 
-## Live demo
+## Quick start
 
-Once deployed to GitHub Pages, this will be live at:
-`https://[your-username].github.io/[repo-name]`
+1. Copy the env template and fill in your keys:
+   ```bash
+   cp .env.example .env.local
+   ```
+2. Install dependencies and run the dev server:
+   ```bash
+   npm install
+   npm run dev
+   ```
+3. Apply the database migrations in Supabase (see `SETUP.md`).
 
-## How to run locally
+Open <http://localhost:3000>. You'll be redirected to `/login` until you have an account.
 
-This is a single HTML file with no build step or dependencies. Just open `index.html` in any browser.
+See `SETUP.md` for the full step-by-step setup, including Supabase, Stripe webhooks, Resend, and Vercel deploy.
 
-```bash
-# From the project folder
-open index.html
+## Project structure
+
+```
+src/
+  app/
+    (auth)/                 login, signup, forgot/reset password + server actions
+    admin/                  staff dashboard (sidebar layout)
+    portal/                 client portal (tab layout)
+    auth/callback/          Supabase OAuth/magic-link callback
+    api/stripe/webhook/     Stripe webhook handler
+  components/               shared UI (brand, sidebar, page-stub, forms)
+  lib/
+    supabase/               browser, server, and middleware clients + types
+    stripe.ts               Stripe SDK singleton
+    email.ts                Resend wrapper
+    nav.ts                  admin + portal navigation
+  middleware.ts             session refresh + RBAC route protection
+supabase/migrations/        SQL: schema + RLS
+prototype/                  original static prototype (design reference)
 ```
 
-Or right-click → Open With → your preferred browser.
+## Roles
 
-## Stack notes
+- **`owner`** — full admin, can change roles of others
+- **`staff`** — full admin minus role management
+- **`customer`** — sees only their own client's data via `/portal/*`
 
-This is a static prototype only — all data is hardcoded. The real production app is planned to use:
+New signups default to `customer`. Promote yourself to `owner` directly in the Supabase SQL editor:
 
-- **Next.js** for the frontend
-- **Supabase** for auth, database (Postgres), and realtime messaging
-- **Stripe** for billing and recurring subscriptions
-- **BetterStack or UptimeRobot** for site monitoring
-- **Resend** for transactional email
-
-## Brand
-
-- **Name:** OnVex Web Development
-- **Location:** Phoenix, AZ
-- **Colors:** Warm desert palette (burnt sienna accent, cream backgrounds, deep navy ink)
-- **Fonts:** Instrument Serif (display), Inter Tight (body), JetBrains Mono (data)
+```sql
+update public.profiles set role = 'owner' where email = 'you@onvex.dev';
+```
 
 ## Status
 
-Prototype — not yet a functional application. All client names, invoices, and data are mock data for design and demo purposes.
+Scaffolded. Auth + RBAC + layouts + all routes exist. Most page bodies are stubs (`<PageStub />`) — replace them with real implementations one at a time using the prototype as the target design.
