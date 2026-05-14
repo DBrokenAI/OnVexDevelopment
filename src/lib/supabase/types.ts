@@ -47,6 +47,34 @@ export type Database = {
         Update: Partial<Database["public"]["Tables"]["clients"]["Insert"]>;
         Relationships: [];
       };
+      tasks: {
+        Row: {
+          id: string;
+          title: string;
+          description: string | null;
+          client_id: string | null;
+          site_id: string | null;
+          assigned_to: string | null;
+          status: string;
+          priority: string;
+          due_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description?: string | null;
+          client_id?: string | null;
+          site_id?: string | null;
+          assigned_to?: string | null;
+          status?: string;
+          priority?: string;
+          due_at?: string | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["tasks"]["Insert"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
