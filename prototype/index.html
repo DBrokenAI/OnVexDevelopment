@@ -4340,92 +4340,12 @@
               <p>14 open · 1 urgent · 5 due this week</p>
             </div>
             <div style="display: flex; gap: 12px; align-items: center;">
-              <div class="view-toggle" id="taskViewToggle">
-                <button class="active" onclick="switchTaskView('list')">List</button>
-                <button onclick="switchTaskView('calendar')">Calendar</button>
-              </div>
-              <button class="primary-btn"><i class="ti ti-plus"></i> Add task</button>
-            </div>
-          </div>
-
-          <!-- LIST VIEW -->
-          <div id="task-list-view">
-            <div class="panel">
-              <div class="panel-head">
-                <div class="panel-title">Urgent</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Fix downtime on papagolandscaping.com</div>
-                <div class="task-due urgent">NOW</div>
-              </div>
-            </div>
-
-            <div class="panel" style="margin-top: 16px;">
-              <div class="panel-head">
-                <div class="panel-title">This week</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Reply to Maria — homepage gallery section</div>
-                <div class="task-due">TODAY</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Send Q2 ad report — Sonoran Legal</div>
-                <div class="task-due">MAY 20</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Review menu copy — Apache Creek Café</div>
-                <div class="task-due">MAY 16</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Mojave Market homepage refresh — round 2</div>
-                <div class="task-due">MAY 18</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Send proposal to Cactus Coffee Co. (lead)</div>
-                <div class="task-due">MAY 17</div>
-              </div>
-            </div>
-
-            <div class="panel" style="margin-top: 16px;">
-              <div class="panel-head">
-                <div class="panel-title">Later</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Renew SSL for redrockdental.com</div>
-                <div class="task-due">MAY 28</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Quarterly backup audit</div>
-                <div class="task-due">JUN 01</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Update portfolio with Gila River Gallery</div>
-                <div class="task-due">JUN 05</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name">Renegotiate Canyon Construct ad budget</div>
-                <div class="task-due">JUN 10</div>
-              </div>
-              <div class="task-row">
-                <div class="task-check done" onclick="this.classList.toggle('done'); this.nextElementSibling.classList.toggle('done')"></div>
-                <div class="task-name done">Onboard High Desert Yoga</div>
-                <div class="task-due">DONE</div>
-              </div>
+              <button class="primary-btn" onclick="openNewTaskModal()"><i class="ti ti-plus"></i> Add task</button>
             </div>
           </div>
 
           <!-- CALENDAR VIEW -->
-          <div id="task-calendar-view" style="display: none;">
+          <div id="task-calendar-view">
             <div class="cal-head">
               <div class="cal-month">May 2026</div>
               <div class="cal-nav">
@@ -7272,11 +7192,239 @@
   </div>
 </div>
 
+<!-- ============ NEW TASK MODAL ============ -->
+<div class="modal-overlay" id="newTaskModal">
+  <div class="modal" id="newTaskWizard">
+    <div class="modal-head">
+      <div class="modal-title">Add a new task</div>
+      <button class="modal-close" onclick="closeModal('newTaskModal')" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="wizard-steps">
+      <div class="wizard-step active">Task</div>
+      <div class="wizard-step">Schedule</div>
+      <div class="wizard-step">Context</div>
+    </div>
+
+    <div class="modal-body">
+      <!-- Step 1: Task -->
+      <div class="wizard-page active">
+        <div class="form-group">
+          <label>What needs to be done? <span class="req">*</span></label>
+          <input type="text" id="newTaskName" placeholder="e.g. Send Q2 ad report — Sonoran Legal" />
+        </div>
+        <div class="form-group">
+          <label>How urgent is it?</label>
+          <div class="tag-picker" id="newTaskTier">
+            <div class="tag-chip" data-tier="urgent">Urgent</div>
+            <div class="tag-chip selected" data-tier="week">This week</div>
+            <div class="tag-chip" data-tier="later">Later</div>
+          </div>
+        </div>
+        <div style="font-size: 12px; color: var(--ink-2); padding: 12px; background: var(--surface-2); border-radius: 8px;">
+          <i class="ti ti-info-circle" style="vertical-align: -2px; margin-right: 4px;"></i>
+          Urgent tasks go to the top of your list and show up red. "Later" tasks won't bug you on the dashboard.
+        </div>
+      </div>
+
+      <!-- Step 2: Schedule -->
+      <div class="wizard-page">
+        <div class="form-group">
+          <label>When is it due? <span class="hint">— optional, but it'll show on the calendar</span></label>
+          <div class="tag-picker" id="newTaskDateQuick">
+            <div class="tag-chip" data-quick="today">Today</div>
+            <div class="tag-chip" data-quick="tomorrow">Tomorrow</div>
+            <div class="tag-chip" data-quick="friday">This Friday</div>
+            <div class="tag-chip selected" data-quick="custom">Pick a date…</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Due date</label>
+          <input type="date" id="newTaskDate" />
+        </div>
+        <div class="form-group">
+          <label>Reminder</label>
+          <select id="newTaskReminder">
+            <option>No reminder</option>
+            <option>1 day before</option>
+            <option>2 days before</option>
+            <option>1 week before</option>
+            <option>Morning of</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Step 3: Context -->
+      <div class="wizard-page">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Site / client <span class="hint">— optional</span></label>
+            <select id="newTaskSite">
+              <option value="">— None —</option>
+              <option>Acme Florals</option>
+              <option>Red Rock Dental</option>
+              <option>Sonoran Legal</option>
+              <option>Apache Creek Café</option>
+              <option>Mojave Market</option>
+              <option>Papago Landscaping</option>
+              <option>Cactus Coffee Co.</option>
+              <option>High Desert Yoga</option>
+              <option>Gila River Gallery</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Assign to</label>
+            <select id="newTaskAssignee">
+              <option>You</option>
+              <option>Your Partner</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Notes <span class="hint">— anything you'll want when you pick this back up</span></label>
+          <textarea id="newTaskNotes" placeholder="Links, context, who to loop in…"></textarea>
+        </div>
+        <div style="font-size: 12px; color: var(--ink-2); padding: 12px; background: var(--surface-2); border-radius: 8px;">
+          <i class="ti ti-check" style="vertical-align: -2px; margin-right: 4px;"></i>
+          You're done. Hit "Add task" and it'll land in the right bucket on your list.
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-foot">
+      <button class="ghost-btn" data-action="back" onclick="wizardGoTo('newTaskWizard', currentStep('newTaskWizard') - 1)" style="visibility: hidden;">
+        <i class="ti ti-arrow-left"></i> Back
+      </button>
+      <div style="display: flex; gap: 10px;">
+        <button class="ghost-btn" onclick="closeModal('newTaskModal')">Cancel</button>
+        <button class="primary-btn" data-action="next" onclick="wizardGoTo('newTaskWizard', currentStep('newTaskWizard') + 1)">
+          Next <i class="ti ti-arrow-right"></i>
+        </button>
+        <button class="primary-btn" data-action="finish" onclick="submitNewTask()" style="display: none;">
+          <i class="ti ti-check"></i> Add task
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   // Wizard helper
   function currentStep(wizardId) {
     const steps = document.querySelectorAll(`#${wizardId} .wizard-step`);
     return Array.from(steps).findIndex(s => s.classList.contains('active'));
+  }
+
+  // =========================================================
+  // NEW TASK MODAL — open, quick-date chips, submit
+  // =========================================================
+  function openNewTaskModal() {
+    const w = document.getElementById('newTaskWizard');
+    w.querySelector('#newTaskName').value = '';
+    w.querySelector('#newTaskNotes').value = '';
+    // Default to today (May 14, 2026 in the prototype) so the task always lands on the calendar
+    w.querySelector('#newTaskDate').value = '2026-05-14';
+    w.querySelector('#newTaskSite').selectedIndex = 0;
+    w.querySelector('#newTaskAssignee').selectedIndex = 0;
+    w.querySelector('#newTaskReminder').selectedIndex = 0;
+    w.querySelectorAll('#newTaskTier .tag-chip').forEach(c => c.classList.toggle('selected', c.dataset.tier === 'week'));
+    w.querySelectorAll('#newTaskDateQuick .tag-chip').forEach(c => c.classList.toggle('selected', c.dataset.quick === 'today'));
+    wizardGoTo('newTaskWizard', 0);
+    openModal('newTaskModal');
+    setTimeout(() => w.querySelector('#newTaskName').focus(), 60);
+  }
+
+  // Quick-date chips set the date input
+  document.querySelectorAll('#newTaskDateQuick .tag-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const dateInput = document.getElementById('newTaskDate');
+      // Prototype "today" is May 14, 2026 to match the rest of the demo
+      const today = new Date(2026, 4, 14);
+      const d = new Date(today);
+      const quick = chip.dataset.quick;
+      if (quick === 'today') { /* keep d */ }
+      else if (quick === 'tomorrow') { d.setDate(d.getDate() + 1); }
+      else if (quick === 'friday') {
+        const add = (5 - d.getDay() + 7) % 7 || 7;
+        d.setDate(d.getDate() + add);
+      } else {
+        dateInput.value = '';
+        return;
+      }
+      const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      dateInput.value = iso;
+    });
+  });
+
+  // If user types a custom date, flip the quick chip back to "custom"
+  document.getElementById('newTaskDate')?.addEventListener('input', () => {
+    document.querySelectorAll('#newTaskDateQuick .tag-chip').forEach(c => {
+      c.classList.toggle('selected', c.dataset.quick === 'custom');
+    });
+  });
+
+  function escapeTaskHtml(s) {
+    return s.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+
+  function submitNewTask() {
+    const nameInput = document.getElementById('newTaskName');
+    const name = nameInput.value.trim();
+    if (!name) {
+      wizardGoTo('newTaskWizard', 0);
+      nameInput.focus();
+      nameInput.style.borderColor = 'var(--danger)';
+      setTimeout(() => { nameInput.style.borderColor = ''; }, 1500);
+      return;
+    }
+    const tier = document.querySelector('#newTaskTier .tag-chip.selected')?.dataset.tier || 'week';
+    const dateStr = document.getElementById('newTaskDate').value;
+    const site = document.getElementById('newTaskSite').value;
+    const displayName = site ? `${name} — ${site}` : name;
+
+    // Add a calendar event if a date was picked and it falls in the visible month (May 2026 +/- visible outer days)
+    let landedCell = null;
+    if (dateStr) {
+      const d = new Date(dateStr + 'T00:00:00');
+      const cells = document.querySelectorAll('#task-calendar-view .cal-day');
+      cells.forEach(cell => {
+        if (landedCell) return;
+        const num = cell.querySelector('.day-num');
+        if (!num) return;
+        const cellDay = parseInt(num.textContent, 10);
+        // Outer cells (.out) are last week of April / first week of June; assume target month matches the picked date's month
+        const isOuter = cell.classList.contains('out');
+        if (!isOuter && d.getFullYear() === 2026 && d.getMonth() === 4 && cellDay === d.getDate()) {
+          landedCell = cell;
+        } else if (isOuter && cellDay === d.getDate()) {
+          // crude: outer cells are April (26-30) or June (1-6) — pick if date matches either
+          if ((d.getMonth() === 3 && cellDay >= 26) || (d.getMonth() === 5 && cellDay <= 6)) {
+            landedCell = cell;
+          }
+        }
+      });
+      if (landedCell) {
+        const evt = document.createElement('div');
+        const evtClass = tier === 'urgent' ? 'urgent' : tier === 'week' ? 'warn' : 'normal';
+        evt.className = 'cal-event ' + evtClass;
+        evt.title = displayName;
+        const short = displayName.length > 30 ? displayName.slice(0, 28) + '…' : displayName;
+        evt.innerHTML = `<span class="dot"></span><span>${escapeTaskHtml(short)}</span>`;
+        landedCell.appendChild(evt);
+        // Highlight briefly so the user can see where it landed
+        const originalShadow = landedCell.style.boxShadow;
+        landedCell.style.transition = 'box-shadow 0.6s ease';
+        landedCell.style.boxShadow = '0 0 0 2px var(--accent)';
+        setTimeout(() => { landedCell.style.boxShadow = originalShadow; }, 1400);
+      }
+    }
+
+    // Bump the "N open" counter in the header
+    const sub = document.querySelector('#page-tasks .page-header p');
+    if (sub) {
+      sub.textContent = sub.textContent.replace(/^(\d+)\s+open/, (_, n) => (parseInt(n, 10) + 1) + ' open');
+    }
+
+    closeModal('newTaskModal');
   }
 </script>
 </body>
