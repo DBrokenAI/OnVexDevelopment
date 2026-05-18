@@ -2797,7 +2797,13 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     line-height: 1.4;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    margin: 0 -4px;
+    transition: background 0.12s;
   }
+  .cal-event:hover { background: var(--surface-2); }
   .cal-event .dot {
     width: 6px;
     height: 6px;
@@ -7239,7 +7245,7 @@
         </div>
         <div class="form-group">
           <label>Due date</label>
-          <input type="date" id="newTaskDate" />
+          <input type="date" id="newTaskDate" min="2026-04-26" max="2026-06-06" />
         </div>
         <div class="form-group">
           <label>Reminder</label>
@@ -7285,21 +7291,29 @@
         </div>
         <div style="font-size: 12px; color: var(--ink-2); padding: 12px; background: var(--surface-2); border-radius: 8px;">
           <i class="ti ti-check" style="vertical-align: -2px; margin-right: 4px;"></i>
-          You're done. Hit "Add task" and it'll land in the right bucket on your list.
+          You're done. Hit "Add task" and it'll land on the calendar on the day you picked.
         </div>
       </div>
     </div>
 
     <div class="modal-foot">
-      <button class="ghost-btn" data-action="back" onclick="wizardGoTo('newTaskWizard', currentStep('newTaskWizard') - 1)" style="visibility: hidden;">
-        <i class="ti ti-arrow-left"></i> Back
-      </button>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <button class="ghost-btn" data-action="back" onclick="wizardGoTo('newTaskWizard', currentStep('newTaskWizard') - 1)" style="visibility: hidden;">
+          <i class="ti ti-arrow-left"></i> Back
+        </button>
+        <button class="ghost-btn" id="newTaskDoneBtn" onclick="toggleCurrentTaskDone()" style="display: none;">
+          <i class="ti ti-check"></i> Mark done
+        </button>
+        <button class="ghost-btn" id="newTaskDeleteBtn" onclick="deleteCurrentTask()" style="display: none; color: var(--danger); border-color: var(--danger-soft);">
+          <i class="ti ti-trash"></i> Delete
+        </button>
+      </div>
       <div style="display: flex; gap: 10px;">
         <button class="ghost-btn" onclick="closeModal('newTaskModal')">Cancel</button>
         <button class="primary-btn" data-action="next" onclick="wizardGoTo('newTaskWizard', currentStep('newTaskWizard') + 1)">
           Next <i class="ti ti-arrow-right"></i>
         </button>
-        <button class="primary-btn" data-action="finish" onclick="submitNewTask()" style="display: none;">
+        <button class="primary-btn" data-action="finish" id="newTaskFinishBtn" onclick="submitNewTask()" style="display: none;">
           <i class="ti ti-check"></i> Add task
         </button>
       </div>
@@ -7315,56 +7329,192 @@
   }
 
   // =========================================================
-  // NEW TASK MODAL — open, quick-date chips, submit
+  // TASK STORE — in-memory model + localStorage persistence
+  // Schema: {id, name, tier, date (YYYY-MM-DD or ''), site, assignee, reminder, notes, done}
+  // =========================================================
+  const TASK_STORE_KEY = 'onvex.prototype.tasks.v1';
+  const TODAY = new Date(2026, 4, 14); // prototype "today"
+  const CAL_START = new Date(2026, 3, 26); // first visible cell (April 26, 2026)
+  let tasks = [];
+  let editingTaskId = null;
+
+  function uid() {
+    return 't-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6);
+  }
+  function loadTasks() {
+    try {
+      const raw = localStorage.getItem(TASK_STORE_KEY);
+      if (raw) tasks = JSON.parse(raw) || [];
+    } catch (e) { tasks = []; }
+  }
+  function saveTasks() {
+    try { localStorage.setItem(TASK_STORE_KEY, JSON.stringify(tasks)); } catch (e) {}
+  }
+  function escapeTaskHtml(s) {
+    return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function findDayCell(d) {
+    if (!d) return null;
+    const diff = Math.round((d.getTime() - CAL_START.getTime()) / 86400000);
+    if (diff < 0 || diff >= 42) return null;
+    return document.querySelectorAll('#task-calendar-view .cal-day')[diff] || null;
+  }
+  function tierToEventClass(tier, done) {
+    if (done) return 'normal';
+    if (tier === 'urgent') return 'urgent';
+    if (tier === 'week') return 'warn';
+    return 'normal';
+  }
+
+  function renderTaskEvent(task) {
+    document.querySelectorAll(`[data-task-id="${task.id}"]`).forEach(n => n.remove());
+    if (!task.date) return;
+    const d = new Date(task.date + 'T00:00:00');
+    const cell = findDayCell(d);
+    if (!cell) return;
+    const evt = document.createElement('div');
+    evt.className = 'cal-event ' + tierToEventClass(task.tier, task.done) + (task.done ? ' done' : '');
+    evt.dataset.taskId = task.id;
+    const display = task.site ? `${task.name} — ${task.site}` : task.name;
+    const tip = [display, task.assignee && `Assigned: ${task.assignee}`, task.reminder && task.reminder !== 'No reminder' && `Reminder: ${task.reminder}`, task.notes].filter(Boolean).join('\n');
+    evt.title = tip;
+    const short = display.length > 30 ? display.slice(0, 28) + '…' : display;
+    evt.innerHTML = `<span class="dot"></span><span>${escapeTaskHtml(short)}</span>`;
+    evt.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openTaskDetail(task.id);
+    });
+    cell.appendChild(evt);
+  }
+
+  function renderAllTasks() {
+    document.querySelectorAll('#task-calendar-view .cal-event[data-task-id]').forEach(n => n.remove());
+    tasks.forEach(renderTaskEvent);
+    updateTaskHeader();
+  }
+
+  function updateTaskHeader() {
+    const open = tasks.filter(t => !t.done).length;
+    const urgent = tasks.filter(t => !t.done && t.tier === 'urgent').length;
+    const weekEnd = new Date(TODAY); weekEnd.setDate(weekEnd.getDate() + 6);
+    const dueThisWeek = tasks.filter(t => {
+      if (t.done || !t.date) return false;
+      const d = new Date(t.date + 'T00:00:00');
+      return d >= TODAY && d <= weekEnd;
+    }).length;
+    const sub = document.querySelector('#page-tasks .page-header p');
+    if (sub) sub.textContent = `${open} open · ${urgent} urgent · ${dueThisWeek} due this week`;
+  }
+
+  // Read the hardcoded events from the calendar HTML into the model on first load
+  function seedTasksFromDom() {
+    if (tasks.length > 0) {
+      // Tasks already in localStorage — just strip any hardcoded events to avoid dupes
+      document.querySelectorAll('#task-calendar-view .cal-event:not([data-task-id])').forEach(n => n.remove());
+      return;
+    }
+    const cells = document.querySelectorAll('#task-calendar-view .cal-day');
+    cells.forEach((cell, idx) => {
+      const d = new Date(CAL_START);
+      d.setDate(d.getDate() + idx);
+      const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+      cell.querySelectorAll('.cal-event').forEach(evt => {
+        const title = evt.getAttribute('title') || evt.querySelector('span:last-child')?.textContent || 'Task';
+        let tier = 'later';
+        if (evt.classList.contains('urgent')) tier = 'urgent';
+        else if (evt.classList.contains('warn')) tier = 'week';
+        else if (evt.classList.contains('info')) tier = 'week';
+        tasks.push({
+          id: uid(),
+          name: title,
+          tier: tier,
+          date: iso,
+          site: '',
+          assignee: 'You',
+          reminder: 'No reminder',
+          notes: '',
+          done: false,
+        });
+        evt.remove();
+      });
+    });
+    saveTasks();
+  }
+
+  // =========================================================
+  // MODAL — open in create mode
   // =========================================================
   function openNewTaskModal() {
+    editingTaskId = null;
     const w = document.getElementById('newTaskWizard');
+    w.querySelector('.modal-title').textContent = 'Add a new task';
     w.querySelector('#newTaskName').value = '';
     w.querySelector('#newTaskNotes').value = '';
-    // Default to today (May 14, 2026 in the prototype) so the task always lands on the calendar
     w.querySelector('#newTaskDate').value = '2026-05-14';
     w.querySelector('#newTaskSite').selectedIndex = 0;
     w.querySelector('#newTaskAssignee').selectedIndex = 0;
     w.querySelector('#newTaskReminder').selectedIndex = 0;
     w.querySelectorAll('#newTaskTier .tag-chip').forEach(c => c.classList.toggle('selected', c.dataset.tier === 'week'));
     w.querySelectorAll('#newTaskDateQuick .tag-chip').forEach(c => c.classList.toggle('selected', c.dataset.quick === 'today'));
+    document.getElementById('newTaskFinishBtn').innerHTML = '<i class="ti ti-check"></i> Add task';
+    document.getElementById('newTaskDeleteBtn').style.display = 'none';
+    document.getElementById('newTaskDoneBtn').style.display = 'none';
     wizardGoTo('newTaskWizard', 0);
     openModal('newTaskModal');
     setTimeout(() => w.querySelector('#newTaskName').focus(), 60);
   }
 
-  // Quick-date chips set the date input
+  // Open in edit mode (when user clicks a calendar event)
+  function openTaskDetail(taskId) {
+    const t = tasks.find(x => x.id === taskId);
+    if (!t) return;
+    editingTaskId = taskId;
+    const w = document.getElementById('newTaskWizard');
+    w.querySelector('.modal-title').textContent = t.done ? 'Edit task (done)' : 'Edit task';
+    w.querySelector('#newTaskName').value = t.name;
+    w.querySelector('#newTaskNotes').value = t.notes || '';
+    w.querySelector('#newTaskDate').value = t.date || '';
+    const siteSel = w.querySelector('#newTaskSite');
+    siteSel.value = t.site || '';
+    if (siteSel.value !== (t.site || '')) siteSel.selectedIndex = 0;
+    const assignSel = w.querySelector('#newTaskAssignee');
+    assignSel.selectedIndex = Math.max(0, Array.from(assignSel.options).findIndex(o => o.textContent === t.assignee));
+    const remindSel = w.querySelector('#newTaskReminder');
+    remindSel.selectedIndex = Math.max(0, Array.from(remindSel.options).findIndex(o => o.textContent === t.reminder));
+    w.querySelectorAll('#newTaskTier .tag-chip').forEach(c => c.classList.toggle('selected', c.dataset.tier === t.tier));
+    w.querySelectorAll('#newTaskDateQuick .tag-chip').forEach(c => c.classList.remove('selected'));
+    document.getElementById('newTaskFinishBtn').innerHTML = '<i class="ti ti-check"></i> Save changes';
+    document.getElementById('newTaskDeleteBtn').style.display = '';
+    const doneBtn = document.getElementById('newTaskDoneBtn');
+    doneBtn.style.display = '';
+    doneBtn.innerHTML = t.done ? '<i class="ti ti-arrow-back-up"></i> Mark not done' : '<i class="ti ti-check"></i> Mark done';
+    wizardGoTo('newTaskWizard', 0);
+    openModal('newTaskModal');
+  }
+
+  // Quick-date chips
   document.querySelectorAll('#newTaskDateQuick .tag-chip').forEach(chip => {
     chip.addEventListener('click', () => {
       const dateInput = document.getElementById('newTaskDate');
-      // Prototype "today" is May 14, 2026 to match the rest of the demo
-      const today = new Date(2026, 4, 14);
-      const d = new Date(today);
+      const d = new Date(TODAY);
       const quick = chip.dataset.quick;
-      if (quick === 'today') { /* keep d */ }
+      if (quick === 'today') { /* keep TODAY */ }
       else if (quick === 'tomorrow') { d.setDate(d.getDate() + 1); }
       else if (quick === 'friday') {
         const add = (5 - d.getDay() + 7) % 7 || 7;
         d.setDate(d.getDate() + add);
       } else {
-        dateInput.value = '';
+        dateInput.focus();
         return;
       }
-      const iso = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-      dateInput.value = iso;
+      dateInput.value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     });
   });
-
-  // If user types a custom date, flip the quick chip back to "custom"
   document.getElementById('newTaskDate')?.addEventListener('input', () => {
     document.querySelectorAll('#newTaskDateQuick .tag-chip').forEach(c => {
       c.classList.toggle('selected', c.dataset.quick === 'custom');
     });
   });
-
-  function escapeTaskHtml(s) {
-    return s.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-  }
 
   function submitNewTask() {
     const nameInput = document.getElementById('newTaskName');
@@ -7376,56 +7526,70 @@
       setTimeout(() => { nameInput.style.borderColor = ''; }, 1500);
       return;
     }
+    const dateInput = document.getElementById('newTaskDate');
+    const date = dateInput.value;
+    if (!date) {
+      wizardGoTo('newTaskWizard', 1);
+      dateInput.focus();
+      dateInput.style.borderColor = 'var(--danger)';
+      setTimeout(() => { dateInput.style.borderColor = ''; }, 1500);
+      return;
+    }
     const tier = document.querySelector('#newTaskTier .tag-chip.selected')?.dataset.tier || 'week';
-    const dateStr = document.getElementById('newTaskDate').value;
-    const site = document.getElementById('newTaskSite').value;
-    const displayName = site ? `${name} — ${site}` : name;
+    const site = document.getElementById('newTaskSite').value || '';
+    const assignSel = document.getElementById('newTaskAssignee');
+    const assignee = assignSel.options[assignSel.selectedIndex]?.textContent || 'You';
+    const remindSel = document.getElementById('newTaskReminder');
+    const reminder = remindSel.options[remindSel.selectedIndex]?.textContent || 'No reminder';
+    const notes = document.getElementById('newTaskNotes').value.trim();
 
-    // Add a calendar event if a date was picked and it falls in the visible month (May 2026 +/- visible outer days)
-    let landedCell = null;
-    if (dateStr) {
-      const d = new Date(dateStr + 'T00:00:00');
-      const cells = document.querySelectorAll('#task-calendar-view .cal-day');
-      cells.forEach(cell => {
-        if (landedCell) return;
-        const num = cell.querySelector('.day-num');
-        if (!num) return;
-        const cellDay = parseInt(num.textContent, 10);
-        // Outer cells (.out) are last week of April / first week of June; assume target month matches the picked date's month
-        const isOuter = cell.classList.contains('out');
-        if (!isOuter && d.getFullYear() === 2026 && d.getMonth() === 4 && cellDay === d.getDate()) {
-          landedCell = cell;
-        } else if (isOuter && cellDay === d.getDate()) {
-          // crude: outer cells are April (26-30) or June (1-6) — pick if date matches either
-          if ((d.getMonth() === 3 && cellDay >= 26) || (d.getMonth() === 5 && cellDay <= 6)) {
-            landedCell = cell;
-          }
-        }
-      });
-      if (landedCell) {
-        const evt = document.createElement('div');
-        const evtClass = tier === 'urgent' ? 'urgent' : tier === 'week' ? 'warn' : 'normal';
-        evt.className = 'cal-event ' + evtClass;
-        evt.title = displayName;
-        const short = displayName.length > 30 ? displayName.slice(0, 28) + '…' : displayName;
-        evt.innerHTML = `<span class="dot"></span><span>${escapeTaskHtml(short)}</span>`;
-        landedCell.appendChild(evt);
-        // Highlight briefly so the user can see where it landed
-        const originalShadow = landedCell.style.boxShadow;
-        landedCell.style.transition = 'box-shadow 0.6s ease';
-        landedCell.style.boxShadow = '0 0 0 2px var(--accent)';
-        setTimeout(() => { landedCell.style.boxShadow = originalShadow; }, 1400);
+    let task;
+    if (editingTaskId) {
+      task = tasks.find(x => x.id === editingTaskId);
+      if (task) Object.assign(task, { name, tier, date, site, assignee, reminder, notes });
+    } else {
+      task = { id: uid(), name, tier, date, site, assignee, reminder, notes, done: false };
+      tasks.push(task);
+    }
+    saveTasks();
+    renderAllTasks();
+    closeModal('newTaskModal');
+
+    // Highlight the day cell so the user sees where it landed
+    if (task && task.date) {
+      const cell = findDayCell(new Date(task.date + 'T00:00:00'));
+      if (cell) {
+        const orig = cell.style.boxShadow;
+        cell.style.transition = 'box-shadow 0.6s ease';
+        cell.style.boxShadow = '0 0 0 2px var(--accent)';
+        setTimeout(() => { cell.style.boxShadow = orig; }, 1400);
       }
     }
+  }
 
-    // Bump the "N open" counter in the header
-    const sub = document.querySelector('#page-tasks .page-header p');
-    if (sub) {
-      sub.textContent = sub.textContent.replace(/^(\d+)\s+open/, (_, n) => (parseInt(n, 10) + 1) + ' open');
-    }
-
+  function deleteCurrentTask() {
+    if (!editingTaskId) return;
+    if (!confirm('Delete this task? This can\'t be undone.')) return;
+    tasks = tasks.filter(t => t.id !== editingTaskId);
+    saveTasks();
+    renderAllTasks();
     closeModal('newTaskModal');
   }
+
+  function toggleCurrentTaskDone() {
+    if (!editingTaskId) return;
+    const t = tasks.find(x => x.id === editingTaskId);
+    if (!t) return;
+    t.done = !t.done;
+    saveTasks();
+    renderAllTasks();
+    closeModal('newTaskModal');
+  }
+
+  // Reset to "today" tomorrow…etc — initial seed and render
+  loadTasks();
+  seedTasksFromDom();
+  renderAllTasks();
 </script>
 </body>
 </html>
