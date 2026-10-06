@@ -28,7 +28,7 @@ cp .env.example .env.local
 3. In **Authentication → URL Configuration**, add:
    - Site URL: `http://localhost:3000` (and your production URL when ready)
    - Redirect URLs: `http://localhost:3000/auth/callback`, plus your production callback.
-4. In **Authentication → Email Templates**, point the "Reset password" link at `{{ .SiteURL }}/reset-password`.
+4. In **Authentication → Email Templates**, leave the "Reset password" link as the default `{{ .ConfirmationURL }}`. The app sends users through `/auth/callback?next=/reset-password`, which signs them in before showing the reset form, so the callback URL above is the only redirect URL needed.
 5. Apply the migrations. Either:
    - Paste each file in `supabase/migrations/` into the SQL editor in order, **or**
    - Use the Supabase CLI:

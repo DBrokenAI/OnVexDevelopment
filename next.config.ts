@@ -1,3 +1,4 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const securityHeaders = [
@@ -18,6 +19,10 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
+  // A stray package-lock.json in the user folder made Next guess the wrong root.
+  turbopack: {
+    root: path.join(__dirname),
+  },
   async headers() {
     return [
       {

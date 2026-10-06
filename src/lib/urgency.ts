@@ -2,6 +2,27 @@ export type Urgency = "overdue" | "urgent" | "high" | "normal" | "low" | "none";
 
 const MS_PER_DAY = 86_400_000;
 
+/**
+ * Due dates are calendar days. They're stored as noon UTC on that day, so the
+ * YYYY-MM-DD prefix is the day in every US timezone. Reading the prefix (rather
+ * than converting the instant to local time) keeps server and browser agreeing.
+ */
+export function parseDueDate(dueAt: string | Date | null | undefined): Date | null {
+  if (!dueAt) return null;
+  if (dueAt instanceof Date) {
+    return Number.isNaN(dueAt.getTime())
+      ? null
+      : new Date(dueAt.getFullYear(), dueAt.getMonth(), dueAt.getDate());
+  }
+  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(dueAt);
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])) : null;
+}
+
+/** Value to store in tasks.due_at for a YYYY-MM-DD date input. */
+export function dueAtFromDateInput(date: string): string {
+  return `${date}T12:00:00Z`;
+}
+
 function daysUntil(due: Date, now: Date): number {
   // Compare midnight-to-midnight in local time so "today" is 0, not -0.x.
   const a = new Date(due.getFullYear(), due.getMonth(), due.getDate()).getTime();
@@ -10,9 +31,8 @@ function daysUntil(due: Date, now: Date): number {
 }
 
 export function getUrgency(dueAt: string | Date | null | undefined, now: Date = new Date()): Urgency {
-  if (!dueAt) return "none";
-  const due = typeof dueAt === "string" ? new Date(dueAt) : dueAt;
-  if (Number.isNaN(due.getTime())) return "none";
+  const due = parseDueDate(dueAt);
+  if (!due) return "none";
   const days = daysUntil(due, now);
   if (days < 0) return "overdue";
   if (days === 0) return "urgent";

@@ -3,13 +3,13 @@
 import { useTransition } from "react";
 import { setTaskStatus, deleteTask } from "@/lib/tasks-actions";
 import type { Task } from "@/lib/tasks";
-import { getUrgency, URGENCY_BADGE, URGENCY_LABEL } from "@/lib/urgency";
+import { getUrgency, parseDueDate, URGENCY_BADGE, URGENCY_LABEL } from "@/lib/urgency";
 import { cn } from "@/lib/utils";
 
 function formatDue(due: string | null) {
-  if (!due) return "—";
-  const d = new Date(due);
-  return d.toLocaleDateString(undefined, {
+  const d = parseDueDate(due);
+  if (!d) return "—";
+  return d.toLocaleDateString("en-US", {
     weekday: "short",
     month: "short",
     day: "numeric",

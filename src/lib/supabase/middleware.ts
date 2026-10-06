@@ -47,11 +47,19 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  // Redirects must carry any session cookies Supabase just refreshed onto
+  // `response`, or the browser keeps the stale token and gets signed out.
+  const redirect = (url: URL) => {
+    const res = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => res.cookies.set(cookie));
+    return res;
+  };
+
   if (!user && !isPublic(pathname)) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
+    return redirect(url);
   }
 
   if (user && (pathname === "/login" || pathname === "/signup")) {
@@ -62,7 +70,7 @@ export async function updateSession(request: NextRequest) {
       .single();
     const url = request.nextUrl.clone();
     url.pathname = profile?.role === "customer" ? "/portal" : "/admin";
-    return NextResponse.redirect(url);
+    return redirect(url);
   }
 
   // Enforce role boundaries.
@@ -77,12 +85,12 @@ export async function updateSession(request: NextRequest) {
     if (pathname.startsWith("/admin") && role === "customer") {
       const url = request.nextUrl.clone();
       url.pathname = "/portal";
-      return NextResponse.redirect(url);
+      return redirect(url);
     }
     if (pathname.startsWith("/portal") && role !== "customer") {
       const url = request.nextUrl.clone();
       url.pathname = "/admin";
-      return NextResponse.redirect(url);
+      return redirect(url);
     }
   }
 

@@ -1,45 +1,66 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #F8FAFC;
+  /* Warm desert palette: cream surfaces, deep navy ink, burnt sienna accent.
+     Every text/background pair below meets WCAG AA (4.5:1). */
+  --bg: #FAF6EF;
   --surface: #FFFFFF;
-  --surface-2: #F1F5F9;
-  --ink: #0F172A;
-  --ink-2: #475569;
-  --ink-3: #94A3B8;
-  --line: #E2E8F0;
-  --line-2: #CBD5E1;
-  --accent: #0EA5E9;
-  --accent-soft: #E0F2FE;
-  --info: #1E40AF;
-  --info-soft: #DBEAFE;
-  --ok: #047857;
-  --ok-soft: #D1FAE5;
-  --warn: #B45309;
-  --warn-soft: #FEF3C7;
-  --danger: #B91C1C;
-  --danger-soft: #FEE2E2;
+  --surface-2: #F3ECE1;
+  --ink: #1B2333;
+  --ink-2: #4A5163;
+  --ink-3: #6E6658;
+  --line: #E8DFD1;
+  --line-2: #D6CAB7;
+  --accent: #A9431C;
+  --accent-soft: #F7E4D9;
+  --on-accent: #FFFFFF;
+  --focus: #A9431C;
+  --info: #1E4E8C;
+  --info-soft: #E3ECF7;
+  --ok: #2F6B3A;
+  --ok-soft: #E2EFE3;
+  --warn: #9A5410;
+  --warn-soft: #F8EBD8;
+  --danger: #A8261F;
+  --danger-soft: #F8E1DE;
+  --on-danger: #FFFFFF;
+  --sidebar-bg: #1B2333;
+  --sidebar-ink: #C9C3B8;
+  --sidebar-ink-3: #8F96A6;
+  /* Primary buttons are deep ink in light mode and sienna in dark mode. */
+  --primary: #1B2333;
+  --on-primary: #FFFFFF;
+  color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --bg: #0B1220;
-  --surface: #111827;
-  --surface-2: #1F2937;
-  --ink: #F1F5F9;
-  --ink-2: #94A3B8;
-  --ink-3: #64748B;
-  --line: #1F2937;
-  --line-2: #334155;
-  --accent: #38BDF8;
-  --accent-soft: rgba(56, 189, 248, 0.12);
-  --info: #60A5FA;
-  --info-soft: rgba(96, 165, 250, 0.12);
-  --ok: #34D399;
-  --ok-soft: rgba(52, 211, 153, 0.12);
-  --warn: #FBBF24;
-  --warn-soft: rgba(251, 191, 36, 0.12);
-  --danger: #F87171;
-  --danger-soft: rgba(248, 113, 113, 0.12);
+  --bg: #12161F;
+  --surface: #191E29;
+  --surface-2: #232A37;
+  --ink: #F3EEE6;
+  --ink-2: #B9B2A6;
+  --ink-3: #9C9588;
+  --line: #262D3A;
+  --line-2: #364052;
+  --accent: #E8875E;
+  --accent-soft: rgba(232, 135, 94, 0.14);
+  --on-accent: #1B1410;
+  --focus: #E8875E;
+  --info: #8AB4F0;
+  --info-soft: rgba(138, 180, 240, 0.14);
+  --ok: #7FC491;
+  --ok-soft: rgba(127, 196, 145, 0.14);
+  --warn: #E8B05E;
+  --warn-soft: rgba(232, 176, 94, 0.14);
+  --danger: #F08A80;
+  --danger-soft: rgba(240, 138, 128, 0.14);
+  --on-danger: #1B1410;
+  --sidebar-bg: #0D1017;
+  --sidebar-ink: #C9C3B8;
+  --sidebar-ink-3: #8F96A6;
+  --primary: #E8875E;
+  --on-primary: #1B1410;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -53,6 +74,7 @@
   --color-line-2: var(--line-2);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
   --color-ok: var(--ok);
@@ -90,4 +112,21 @@ body {
 
 .font-mono {
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* One visible focus ring for keyboard users, everywhere. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

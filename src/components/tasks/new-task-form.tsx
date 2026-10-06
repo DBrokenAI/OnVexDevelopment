@@ -40,7 +40,7 @@ function Inner() {
           <select
             name="priority"
             defaultValue="normal"
-            className="h-10 w-full rounded-md border border-[var(--line-2)] bg-[var(--surface)] px-3 text-sm text-[var(--ink)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/40 focus:border-[var(--accent)]"
+            className="h-10 w-full rounded-md border border-[var(--line-2)] bg-[var(--surface)] px-3 text-sm text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-[var(--focus)] focus:border-[var(--accent)]"
           >
             <option value="low">Low</option>
             <option value="normal">Normal</option>

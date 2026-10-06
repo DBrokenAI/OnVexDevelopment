@@ -1,18 +1,24 @@
+import { PageHeader } from "@/components/page-header";
+
 export function PageStub({
   title,
+  accent,
   description,
   notes,
+  tools = true,
 }: {
   title: string;
+  accent?: string;
   description: string;
   notes?: string[];
+  /** Off for portal pages, whose header already has the theme toggle. */
+  tools?: boolean;
 }) {
   return (
-    <div className="max-w-3xl">
-      <h2 className="font-display text-3xl mb-1">{title}</h2>
-      <p className="text-sm text-[var(--ink-2)] mb-6">{description}</p>
+    <div>
+      <PageHeader title={title} accent={accent} subtitle={description} tools={tools} />
 
-      <div className="rounded-lg border border-dashed border-[var(--line-2)] bg-[var(--surface)] p-6">
+      <div className="max-w-3xl rounded-lg border border-dashed border-[var(--line-2)] bg-[var(--surface)] p-6">
         <div className="text-xs uppercase tracking-[0.14em] text-[var(--ink-3)] mb-2">
           Coming soon
         </div>

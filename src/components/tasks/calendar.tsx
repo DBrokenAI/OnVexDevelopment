@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Task } from "@/lib/tasks";
-import { getUrgency, URGENCY_DOT } from "@/lib/urgency";
+import { getUrgency, parseDueDate, URGENCY_DOT } from "@/lib/urgency";
 import { cn } from "@/lib/utils";
 
 function ymd(d: Date): string {
@@ -47,11 +47,12 @@ export function Calendar({
   const matrix = monthMatrix(year, month);
   const today = ymd(new Date());
 
-  // Group tasks by yyyy-mm-dd in the user's local timezone.
+  // Group tasks by their due day.
   const byDay = new Map<string, Task[]>();
   for (const t of tasks) {
-    if (!t.due_at) continue;
-    const key = ymd(new Date(t.due_at));
+    const due = parseDueDate(t.due_at);
+    if (!due) continue;
+    const key = ymd(due);
     if (!byDay.has(key)) byDay.set(key, []);
     byDay.get(key)!.push(t);
   }
@@ -116,7 +117,7 @@ export function Calendar({
                 className={cn(
                   "text-xs font-medium",
                   isToday &&
-                    "inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)] text-white",
+                    "inline-flex h-5 w-5 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--on-accent)]",
                 )}
               >
                 {d.getDate()}

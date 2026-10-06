@@ -11,10 +11,10 @@ export interface ButtonProps
 }
 
 const variants: Record<Variant, string> = {
-  primary: "bg-[var(--accent)] text-white hover:opacity-90 disabled:opacity-50",
+  primary: "bg-[var(--primary)] text-[var(--on-primary)] hover:opacity-90 disabled:opacity-50",
   ghost:
     "bg-transparent text-[var(--ink)] border border-[var(--line-2)] hover:bg-[var(--surface-2)] disabled:opacity-50",
-  danger: "bg-[var(--danger)] text-white hover:opacity-90 disabled:opacity-50",
+  danger: "bg-[var(--danger)] text-[var(--on-danger)] hover:opacity-90 disabled:opacity-50",
 };
 
 const sizes: Record<Size, string> = {
