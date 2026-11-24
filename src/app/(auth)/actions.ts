@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 import { headers } from "next/headers";
 
 const loginSchema = z.object({
@@ -67,12 +68,10 @@ export async function loginAction(_prev: ActionState, formData: FormData): Promi
     .eq("id", (await supabase.auth.getUser()).data.user!.id)
     .single();
 
-  const dest =
-    parsed.data.next && parsed.data.next.startsWith("/")
-      ? parsed.data.next
-      : profile?.role === "customer"
-        ? "/portal"
-        : "/admin";
+  const dest = safeRedirectPath(
+    parsed.data.next,
+    profile?.role === "customer" ? "/portal" : "/admin",
+  );
 
   revalidatePath("/", "layout");
   redirect(dest);

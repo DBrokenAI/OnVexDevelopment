@@ -1,7 +1,7 @@
 "use client";
 
-import { useTransition } from "react";
-import { setTaskStatus, deleteTask } from "@/lib/tasks-actions";
+import { useState, useTransition } from "react";
+import { setTaskStatus, deleteTask, type TaskActionState } from "@/lib/tasks-actions";
 import type { Task } from "@/lib/tasks";
 import { getUrgency, URGENCY_BADGE, URGENCY_LABEL } from "@/lib/urgency";
 import { cn } from "@/lib/utils";
@@ -18,8 +18,19 @@ function formatDue(due: string | null) {
 
 export function TaskRow({ task }: { task: Task }) {
   const [pending, start] = useTransition();
+  const [error, setError] = useState<string | null>(null);
   const urgency = getUrgency(task.due_at);
   const done = task.status === "done";
+
+  const run = (fn: () => Promise<TaskActionState>) =>
+    start(async () => {
+      try {
+        const res = await fn();
+        setError(res && !res.ok ? res.error : null);
+      } catch {
+        setError("Something went wrong. Try again.");
+      }
+    });
 
   return (
     <div
@@ -32,11 +43,7 @@ export function TaskRow({ task }: { task: Task }) {
         type="checkbox"
         checked={done}
         disabled={pending}
-        onChange={() =>
-          start(async () => {
-            await setTaskStatus(task.id, done ? "todo" : "done");
-          })
-        }
+        onChange={() => run(() => setTaskStatus(task.id, done ? "todo" : "done"))}
         className="h-4 w-4 cursor-pointer accent-[var(--accent)]"
       />
       <div className="flex-1 min-w-0">
@@ -45,6 +52,11 @@ export function TaskRow({ task }: { task: Task }) {
         </div>
         {task.description && (
           <div className="text-xs text-[var(--ink-2)] truncate">{task.description}</div>
+        )}
+        {error && (
+          <div role="alert" className="text-xs text-[var(--danger)] truncate">
+            {error}
+          </div>
         )}
       </div>
       <div className="hidden sm:block text-xs text-[var(--ink-2)] tabular-nums">
@@ -61,11 +73,7 @@ export function TaskRow({ task }: { task: Task }) {
       <button
         type="button"
         disabled={pending}
-        onClick={() =>
-          start(async () => {
-            await deleteTask(task.id);
-          })
-        }
+        onClick={() => run(() => deleteTask(task.id))}
         className="text-[var(--ink-3)] hover:text-[var(--danger)] opacity-0 group-hover:opacity-100 transition-opacity text-xs"
         aria-label="Delete task"
       >
